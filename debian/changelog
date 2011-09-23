@@ -1,0 +1,518 @@
+vzctl (3.0.29-2pve1) unstable; urgency=low
+
+  * update to 3.0.29.2
+
+ -- Proxmox Support Team <support@proxmox.com>  Fri, 23 Sep 2011 12:55:20 +0200
+
+vzctl (3.0.29-1pve1) unstable; urgency=low
+
+  *  update to 3.0.29.1
+
+ -- Proxmox Support Team <support@proxmox.com>  Tue, 20 Sep 2011 07:37:35 +0200
+
+vzctl (3.0.28-1pve5) unstable; urgency=low
+
+  * update to latest upstream
+
+ -- Proxmox Support Team <support@proxmox.com>  Tue, 06 Sep 2011 11:57:16 +0200
+
+vzctl (3.0.28-1pve4) unstable; urgency=low
+
+  * set defaull template to debian-6.0-standard
+  
+  * set CONFIGFILE="pve.auto" in /etc/vz/vz.conf
+
+  * merge some fixes from upstream
+
+ -- Proxmox Support Team <support@proxmox.com>  Wed, 31 Aug 2011 10:20:13 +0200
+
+vzctl (3.0.28-1pve1) unstable; urgency=low
+
+  * update to vzctl-3.0.28.3
+
+ -- Proxmox Support Team <support@proxmox.com>  Tue, 28 Jun 2011 12:17:34 +0200
+
+vzctl (3.0.27-1pve1) unstable; urgency=low
+
+  * update to upstream vzctl-3.0.27
+
+ -- Proxmox Support Team <support@proxmox.com>  Mon, 30 May 2011 07:00:57 +0200
+
+vzctl (3.0.26-1pve4) unstable; urgency=low
+
+  * ignore vzeventd module load errors (avoid problems when updating
+    kernel)
+
+ -- Proxmox Support Team <support@proxmox.com>  Tue, 10 May 2011 11:08:07 +0200
+
+vzctl (3.0.26-1pve3) unstable; urgency=low
+
+  * update to vzctl-3.0.26.3 release
+  
+ -- Proxmox Support Team <support@proxmox.com>  Mon, 09 May 2011 09:28:16 +0200
+
+vzctl (3.0.26-1pve2) unstable; urgency=low
+
+  * remove stale cron scripts
+  
+  * fix /etc/init.d/vzeventd - do not fail on non-openvz kernels
+
+ -- Proxmox Support Team <support@proxmox.com>  Mon, 02 May 2011 12:12:44 +0200
+
+vzctl (3.0.26-1pve1) unstable; urgency=low
+
+  * update to latest available version fromn git (Wed, 27 Apr 2011)
+  
+  * change openvz startup priority from 20 to 21
+
+ -- Proxmox Support Team <support@proxmox.com>  Mon, 02 May 2011 06:50:16 +0200
+
+vzctl (3.0.24-1pve4) unstable; urgency=low
+
+  * fix bug in list2str (fix-list2str.patch)
+
+ -- Proxmox Support Team <support@proxmox.com>  Fri, 03 Sep 2010 14:19:09 +0200
+
+vzctl (3.0.24-1pve3) unstable; urgency=low
+
+  * update to latest version from git (Fri, 27 Aug 2010)
+
+ -- Proxmox Support Team <support@proxmox.com>  Mon, 30 Aug 2010 11:51:17 +0200
+
+vzctl (3.0.24-1pve2) unstable; urgency=low
+
+  * correctly call ldconfig in postinst/postrm
+  
+  * use quilt to manage patches
+
+ -- Proxmox Support Team <support@proxmox.com>  Fri, 06 Aug 2010 11:52:00 +0200
+
+vzctl (3.0.24-1pve1) unstable; urgency=low
+
+  * upgrade to latest version from git
+
+  * add lintian overrides
+
+  * remove OpenVZ specific settings from /etc/sysctl.conf
+    and move them to /etc/sysctl.d/vzctl
+
+  * sysctl: set "net.ipv4.ip_forward = 1" - seems to be needed by newer
+    kernels
+  
+ -- Proxmox Support Team <support@proxmox.com>  Thu, 05 Aug 2010 10:43:16 +0200
+
+vzctl (3.0.23-1pve11) unstable; urgency=low
+
+  * fix bug in vzgetnetdev (revert recent change). See OpenVZ Bug #1506
+
+ -- Proxmox Support Team <support@proxmox.com>  Thu, 06 May 2010 09:55:11 +0200
+
+vzctl (3.0.23-1pve10) unstable; urgency=low
+
+  * /etc/network/if-up.d/vzifup-post: remove symbolic link in preinst
+    script.
+
+ -- Proxmox Support Team <support@proxmox.com>  Fri, 30 Apr 2010 14:08:41 +0200
+
+vzctl (3.0.23-1pve9) unstable; urgency=low
+
+  * update to latest version from git (Thu Apr 22 14:39:01 2010)
+
+ -- Proxmox Support Team <support@proxmox.com>  Tue, 27 Apr 2010 11:05:23 +0200
+
+vzctl (3.0.23-1pve8) unstable; urgency=low
+
+  * fix another type in debian-add_ip.sh (debian-add-ip-fix.diff)
+
+ -- Proxmox Support Team <support@proxmox.com>  Thu, 28 Jan 2010 11:35:14 +0100
+
+vzctl (3.0.23-1pve7) unstable; urgency=low
+
+  * update to latest available version, remove previous workarounds used
+    in 1pve6
+
+ -- Proxmox Support Team <support@proxmox.com>  Mon, 25 Jan 2010 10:51:46 +0100
+
+vzctl (3.0.23-1pve6) unstable; urgency=low
+
+  * revert fix for bug 478 (revert-bug-478-fix.diff), because that
+    modifies network configuration when using NETIF (incompatible
+    with previous versions), see http://bugzilla.openvz.org/show_bug.cgi?id=478
+
+ -- Proxmox Support Team <support@proxmox.com>  Thu, 21 Jan 2010 11:40:59 +0100
+
+vzctl (3.0.23-1pve5) unstable; urgency=low
+
+  * fix init-logger endless loop by opening fifo RW
+  
+  * fix init script - don't fail on wrong kernel - simply exit instead.
+
+ -- Proxmox Support Team <support@proxmox.com>  Thu, 07 Jan 2010 11:10:58 +0100
+
+vzctl (3.0.23-1pve4) unstable; urgency=low
+
+  * update to latest available version
+  
+  * use fifo for init-logger because ptty mave seroius problems on 2.6.18
+    and live migration.
+  
+  * modified init-logger to wait on shutdown until all output is written.
+  
+  * add patch for 1389 (debian-add-ip.diff)
+
+ -- Proxmox Support Team <support@proxmox.com>  Mon, 04 Jan 2010 13:45:13 +0100
+
+vzctl (3.0.23-1pve3) unstable; urgency=low
+
+  * fix change_hostname bug
+  
+  * install only one init-logger binary (there is no need for the
+    i386/amd64 split)
+
+ -- Proxmox Support Team <support@proxmox.com>  Fri, 08 May 2009 09:57:24 +0200
+
+vzctl (3.0.23-1pve2) unstable; urgency=low
+
+  * compile for debian lenny
+  
+  * added procps dependency.
+  
+ -- Proxmox Support Team <support@proxmox.com>  Wed, 22 Apr 2009 10:27:46 +0200
+
+vzctl (3.0.23-1pve1) unstable; urgency=low
+
+  * use compiled init logger (diet)
+
+ -- Proxmox Support Team <support@proxmox.com>  Mon, 12 Jan 2009 09:50:16 +0100
+
+vzctl (3.0.23-1pve) unstable; urgency=low
+
+  *  include latest updates from git repository (commit 71ad397769813bf677213a5981cbbf6b27a143a3, Sun, 30 Nov 2008)
+
+  * fix hostname scripts (do not write fqdn)
+  
+ -- Proxmox Support Team <support@proxmox.com>  Fri,  2 Jan 2009 10:43:40 +0100
+
+vzctl (3.0.22-3pve3) unstable; urgency=low
+
+  * include latest updates from git repository (commit 34934b090b03a996f7bbcc9b13145390efc56eb6, Thu Oct 16 2008)
+
+ -- Proxmox Support Team <support@proxmox.com>  Fri, 29 Aug 2008 11:15:32 +0200
+
+vzctl (3.0.22-3pve1) unstable; urgency=low
+
+  * recompile with new release number, because we released a wrong version
+
+ -- Proxmox Support Team <support@proxmox.com>  Thu, 24 Jul 2008 08:21:22 +0200
+
+vzctl (3.0.22-3pve) unstable; urgency=low
+
+  *  update from git (commit bca585d9c7c9e72bad99fc3f48bd8245ab21848c)
+  
+ -- Proxmox Support Team <support@proxmox.com>  Tue,  1 Jul 2008 11:08:25 +0200
+
+vzctl (3.0.22-2pve) unstable; urgency=low
+
+  * update from git
+
+ -- Proxmox Support Team <support@proxmox.com>  Tue, 11 Mar 2008 10:34:26 +0100
+
+vzctl (3.0.22-1pve) unstable; urgency=low
+
+  * updated to 3.0.22
+
+ -- root <root@deoahu.aurer-it.com>  Thu, 17 Jan 2008 11:54:47 +0100
+
+vzctl (3.0.20-1pve) unstable; urgency=low
+
+  * updated to 3.0.20, experimental version 
+
+ -- Proxmox Support Team <support@proxmox.com>  Fri, 14 Dec 2007 10:51:36 +0100
+
+vzctl (3.0.18-1dso1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Fri,  6 Jul 2007 13:07:56 +0200
+
+vzctl (3.0.17-1dso1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Mon, 25 Jun 2007 09:07:52 +0200
+
+vzctl (3.0.16-5dso5) unstable; urgency=low
+
+  * init.d/vz: fix case element "update-cron"
+  * On stopping OpenVZ (SUB)System these linux-kernel-modules should
+    are removed: vzmon, vzdquota, vzdev
+
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  14 Jun 2007 22:51:09 +0200
+
+vzctl (3.0.16-5dso4) unstable; urgency=low
+
+  * Added IPv6 support to debian dists scripts.
+  * Minor typo change of vzctl.c.
+  * On stopping OpenVZ (SUB)System these linux-kernel
+    -modules should are removed: vzmon, vzdquota, vzdev
+  * vzcpucheck: update header
+  
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Thu, 14 Jun 2007 22:15:22 +0200
+
+vzctl (3.0.16-5dso3) unstable; urgency=low
+
+  * Delete IPv6 route from host system after VE stop
+
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Wed, 23 May 2007 07:08:18 +0200
+
+vzctl (3.0.16-5dso2) unstable; urgency=low
+
+  * Correct ipadd handling in debian_ip_add.sh
+  * script init.d/vz: fix check_kernel() function
+  * script init.d/vz-redhat: fix kernel config check
+
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Fri, 11 May 2007 13:13:46 +0200
+
+vzctl (3.0.16-5dso1) unstable; urgency=low
+
+  * Add function update-cron, so without (re)starting OpenVZ cron
+    entry can be updated.
+  * Modify cron function, so 3rd party modules can use the OpenVZ
+    cron interface.
+  * Add manpages for ndsend (8) and vznetcfg (8).
+
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Tue, 01 May 2007 19:56:32 +0200
+
+vzctl (3.0.16-4dso1) unstable; urgency=low
+
+  * Add magic.h to include/linux, so vzsplit can be build, magic.h is
+    shipped in kernel 2.6.20.
+  * Add supressing kernel-messages on /dev/console, when OpenVZ is
+    started/stopped.
+
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Thu, 26 Apr 2007 08:45:03 +0200
+
+vzctl (3.0.16-3dso1) unstable; urgency=low
+
+  * Correct bashism in /etc/init.d/vz, so default /bin/sh can be
+    [b|d]ash or the debian busybox.
+  * Correct permission on /etc/vz/cron/vz.
+
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Tue, 24 Apr 2007 12:15:50 +0200
+
+vzctl (3.0.16-2dso1) unstable; urgency=low
+
+  * Correct vlan handling in vzgetnetdev (vps-function.sh), Thanks to
+    David Morgado <david.morgado@gmail.com>.
+  * Correct ipadd handling in dists scripts debian_add_ip.sh, Closes
+    OpenVZ Bug #547.
+
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Fri, 20 Apr 2007 13:03:33 +0200
+
+vzctl (3.0.16-1dso2) unstable; urgency=low
+
+  * Add pathes /var/lib/vz, /opt/vz, /srv/vz to vzsplit and update
+    cron.d settings to Debian scripts taken from Ola Lundqvist
+    <ola@opalsys.net>
+
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Thu, 22 Mar 2007 11:05:24 +0100
+
+vzctl (3.0.16-1dso1) unstable; urgency=low
+
+  * New upstream version.
+
+  * Fix /etc/init.d/vz stop, remove all relevant OpenVZ modules on stop, so
+    /etc/init.d/vz status will work, need for the cron.d behavior.
+  * Add check if a enabled OpenVZ kernel is running or not.
+  * Add info about --setmode to man-page of vzctl.
+  * Remove an obsolte entry in vpsnetclean.
+  * Fix port syntax between scp and ssh in vzmigrate script.
+  * Add --nummeric-ids to rysnc option in vzmigrate script, closes OpenVZ BUG #494.
+  * Add new distribution "ArchLinux" distscripts.
+  * Add recommends openssh-client to vzctl, vzmigrate use ssh and scp.
+  
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Wed, 14 Mar 2007 10:23:36 +0100
+
+vzctl (3.0.14-1dso2) unstable; urgency=high
+
+  * Fix a problem, when starting OpenVZ.
+
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Tue, 16 Jan 2007 13:13:57 +0100
+
+vzctl (3.0.14-1dso1) unstable; urgency=low
+
+  * New Release.
+  * Add some HINT to README.Debian
+
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Mon, 15 Jan 2007 16:22:19 +0100
+
+vzctl (3.0.13-1dso3) unstable; urgency=low
+
+  * Change to new automake and autoconf build.
+  * Fix installing the right architecure configs.
+  * Add more Information to Createing an OpenVZ OS Template,
+    Readme more at /usr/share/doc/vzctl/README.Debian
+  
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Mon, 25 Dec 2006 11:01:34 +0100
+
+vzctl (3.0.13-1dso2) unstable; urgency=high
+
+  * Fix /etc/init.d/vz is missing!  
+
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Sat,  2 Dec 2006 20:05:52 +0100
+
+vzctl (3.0.13-1dso1) unstable; urgency=low
+
+  * New Release.
+  * Closes OpenVZ Bug #198 -> modified the preinst script, to remove the workaround.
+
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Thu, 23 Nov 2006 16:30:16 +0100
+
+vzctl (3.0.12-1dso6) unstable; urgency=low
+
+  * New Release.
+
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Wed, 22 Nov 2006 15:08:39 +0100
+
+vzctl (3.0.12-1dso5) unstable; urgency=low
+
+  * Closes OpenVZ Bug #302.
+
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Mon, 16 Oct 2006 20:29:00 +0200
+
+vzctl (3.0.12-1dso4) unstable; urgency=low
+
+  * Some Closed Bugs, need the change of Debian rules file.
+
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Thu, 12 Oct 2006 22:39:52 +0200
+
+vzctl (3.0.12-1dso3) unstable; urgency=low
+
+  * Remove gawk from depends, vps-functions fixed.
+
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Mon,  9 Oct 2006 20:06:55 +0200
+
+vzctl (3.0.12-1dso2) unstable; urgency=low
+
+  * Add gawk to depends, vps-functions need this.
+  * Change location of vznetcfg to /usr/sbin.
+  * Cleanup debian rules files.
+
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Sat,  7 Oct 2006 13:54:11 +0200
+
+vzctl (3.0.12-1dso1) unstable; urgency=low
+
+  * New Release.
+
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Fri,  6 Oct 2006 03:05:25 +0200
+
+vzctl (3.0.11-1dso8) unstable; urgency=low
+
+  * Moved vename-convert to postinst.script.
+
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Wed, 27 Sep 2006 14:59:35 +0200
+
+vzctl (3.0.11-1dso7) unstable; urgency=low
+
+  * Insert info "--applyconfig_map" to vzctl
+  * Add script vename_convert.sh, to convert vename's to new "link" format.
+  * Modify a Typo in ./src/lib/config.c, ivalid -> invalid
+
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Mon, 25 Sep 2006 10:10:32 +0200
+
+vzctl (3.0.11-1dso6) unstable; urgency=low
+
+  * vzctl.bash_completetion.d script: add ve-names on select VEID's
+    and add auto generated ve-nummer on creating.
+  * Remove vps-postcreate in ./src/Makefile, file doesn't exist anymore.
+  * Add distribution install settings in ./Makefile and ./src/Makefile
+
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Thu, 14 Sep 2006 23:14:17 +0200
+
+vzctl (3.0.11-1dso5) unstable; urgency=low
+
+  * Closes Bug #198
+  * Modified the bash_completion.d script for Debian.
+  * Fixed typo in types.h, line 32: VZ_DIR"/conf/" to VZ_DIR"conf/"
+  * Rename Open Virtuozzo entries to OpenVZ, thanks to Kir Kolyshkin <kir@openvz.org>
+
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Wed, 13 Sep 2006 03:51:02 +0200
+
+vzctl (3.0.11-1dso4) unstable; urgency=low
+
+  * Add new suggests ovzkernel
+  * Modify postrm and prerm to remove unused folders on purge.
+
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Thu, 31 Aug 2006 23:02:00 +0200
+
+vzctl (3.0.11-1dso3) unstable; urgency=low
+
+  * Delete folders /etc/vz/names and /var/lock/subsys folder on purge.
+  * Delete entry of LICVIEW in /etc/init.d/vz, only supported in Virtuozzo.
+
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Sun, 20 Aug 2006 19:10:00 +0200
+
+vzctl (3.0.11-1dso2) unstable; urgency=low
+
+  * Fix awk handling in vzmigrate.
+
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Thu, 17 Aug 2006 20:04:00 +0200
+
+vzctl (3.0.11-1dso1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Mon, 14 Aug 2006 21:35:00 +0200
+
+vzctl (3.0.10-1dso2) unstable; urgency=low
+
+  * Update depends to awk insteed of gawk.
+
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Wed, 26 Jul 2006 14:27:00 +0200
+
+vzctl (3.0.10-1dso1) unstable; urgency=low
+
+  * New upstream release.
+  * Updated depends, taken from Ola Lundqvist <ola@opalsys.net> (Debian Maintainer of vzctl)
+  * Fix postcreate, use right path for awk.
+  * Modify bash-variables for root, when enter a VPS.
+
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Fri, 09 Jun 2006 20:53:00 +0200
+
+vzctl (3.0.0-7.dso.1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Fri, 21 Apr 2006 17:44:00 +0200
+
+vzctl (3.0.0-4.dso.3) unstable; urgency=low
+
+  * Fix typos in scripts vpsreboot and vpsnetclean.
+
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Mon, 27 Mar 2006 03:05:00 +0200
+
+vzctl (3.0.0-4.dso.2) unstable; urgency=low
+
+  * Fix errors on Start/Stop with undefined symbols,
+    reported by Till Brehm <t.brehm@howtoforge.com>.
+
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Tue, 21 Mar 2006 12:05:00 +0100
+
+vzctl (3.0.0-2.dso.1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Thu, 09 Mar 2006 09:08:00 +0100
+
+vzctl (2.7.0-26dso.1) unstable; urgency=low
+    
+  * New upstream release.
+  * Debian Policy ready.
+    
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Wed, 08 Feb 2006 12:20:00 +0100
+
+vzctl (2.7.0-25dso.1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Thorsten Schifferdecker <tsd@debian.systs.org>  Mon, 30 Jan 2006 14:09:19 +0100

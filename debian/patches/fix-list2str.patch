@@ -1,0 +1,17 @@
+Index: src/src/lib/list.c
+===================================================================
+--- src.orig/src/lib/list.c	2010-09-03 14:16:53.000000000 +0200
++++ src/src/lib/list.c	2010-09-03 14:17:30.000000000 +0200
+@@ -49,8 +49,11 @@
+ 	if (c)
+ 		sp += sprintf(sp, "%c", c);
+ 
+-	if (list_empty(head))
++	if (list_empty(head)) {
++		if (c)
++			sp += sprintf(sp, "%c", c);
+ 		return buf;
++	}
+ 
+ 	list_for_each(p, head, list) {
+ 		if (p->val == NULL)

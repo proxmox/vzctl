@@ -1,0 +1,13 @@
+Index: new/etc/init.d/initd-functions.in
+===================================================================
+--- new.orig/etc/init.d/initd-functions.in	2011-05-30 07:08:24.000000000 +0200
++++ new/etc/init.d/initd-functions.in	2011-05-30 07:09:11.000000000 +0200
+@@ -86,7 +86,7 @@
+ {
+ 	if ! test -d /proc/vz ; then
+ 		echo "Running kernel is not an OpenVZ kernel"
+-		exit 6
++		exit 0
+ 	fi
+ }
+ 

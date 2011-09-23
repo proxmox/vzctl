@@ -1,0 +1,402 @@
+Index: src/etc/vz.conf
+===================================================================
+--- src.orig/etc/vz.conf	2011-05-02 06:28:16.000000000 +0200
++++ src/etc/vz.conf	2011-05-02 06:28:21.000000000 +0200
+@@ -10,6 +10,9 @@
+ LOG_LEVEL=0
+ VERBOSE=0
+ 
++## log output of init process to $VE_ROOT/var/log/init.log
++INITLOG=yes
++
+ ## Disk quota parameters
+ DISK_QUOTA=yes
+ VZFASTBOOT=no
+Index: src/include/res.h
+===================================================================
+--- src.orig/include/res.h	2011-05-02 06:28:16.000000000 +0200
++++ src/include/res.h	2011-05-02 06:28:21.000000000 +0200
+@@ -57,6 +57,7 @@
+ 	int onboot;
+ 	unsigned long *bootorder;
+ 	int wait;
++	int initlog;
+ } misc_param;
+ 
+ struct mod_action;
+Index: src/include/vzctl_param.h
+===================================================================
+--- src.orig/include/vzctl_param.h	2011-05-02 06:28:16.000000000 +0200
++++ src/include/vzctl_param.h	2011-05-02 06:28:21.000000000 +0200
+@@ -135,6 +135,7 @@
+ #define PARAM_BOOTORDER		364
+ #define PARAM_PCI_ADD		365
+ #define PARAM_PCI_DEL		366
++#define PARAM_INITLOG		367
+ 
+ #define PARAM_LINE		"e:p:f:t:i:l:k:a:b:n:x:h"
+ #endif
+Index: src/man/ctid.conf.5
+===================================================================
+--- src.orig/man/ctid.conf.5	2011-05-02 06:28:16.000000000 +0200
++++ src/man/ctid.conf.5	2011-05-02 06:28:21.000000000 +0200
+@@ -28,6 +28,13 @@
+ Default is \fBno\fR, meaning the container will not be started
+ if \fBONBOOT\fR parameter is omitted.
+ Corresponds to the \fB--onboot\fR option.
++.IP \fBINITLOG\fR="\fByes\fR|\fBno\fR"
++If enabled init output is logged to /var/log/init.log. This is done by
++opening a BSD pseudo terminal device. A new /dev/console is created and points
++to that pseudo terminal slave. An additional process started
++inside the container (init-logger) reads the master and write results
++to /var/log/init.log.
++Corresponds to the \fB--initlog\fR option.
+ .IP \fBBOOTORDER\fR="\fInumber\fR"
+ Specifies the CT boot order priority. Corresponds to the
+ \fB--bootorder\fR option.
+Index: src/scripts/Makefile.am
+===================================================================
+--- src.orig/scripts/Makefile.am	2011-05-02 06:28:16.000000000 +0200
++++ src/scripts/Makefile.am	2011-05-02 06:28:21.000000000 +0200
+@@ -17,7 +17,11 @@
+ 
+ include $(top_srcdir)/pathsubst.am
+ 
++init-logger: init-logger.c
++	diet -Os gcc -static -s -o init-logger init-logger.c
++
+ vzlib_SCRIPTS = \
++        init-logger \
+ 	vps-create \
+ 	vps-functions \
+ 	vps-net_add \
+Index: src/src/lib/config.c
+===================================================================
+--- src.orig/src/lib/config.c	2011-05-02 06:28:16.000000000 +0200
++++ src/src/lib/config.c	2011-05-02 06:28:21.000000000 +0200
+@@ -61,6 +61,7 @@
+ {"LOG_LEVEL",	NULL, PARAM_LOGLEVEL},
+ {"LOGFILE",	NULL, PARAM_LOGFILE},
+ {"VERBOSE",	NULL, PARAM_VERBOSE},
++{"INITLOG",	NULL, PARAM_INITLOG},
+ 
+ {"IPTABLES",	NULL, PARAM_IPTABLES},
+ /*	UB	*/
+@@ -120,6 +121,8 @@
+ {"CPULIMIT",	NULL, PARAM_CPULIMIT},
+ {"CPUS",	NULL, PARAM_VCPUS},
+ {"CPUMASK",	NULL, PARAM_CPUMASK},
++/*      misc param     */
++{"INITLOG",	NULL, PARAM_INITLOG},
+ /* create param	*/
+ {"ONBOOT",	NULL, PARAM_ONBOOT},
+ {"CONFIGFILE",	NULL, PARAM_CONFIG},
+@@ -1244,6 +1247,9 @@
+ 
+ 	ret = 0;
+ 	switch (conf->id) {
++	case PARAM_INITLOG:
++		ret = conf_store_yesno(conf_h, conf->name, misc->initlog);
++		break;
+ 	case PARAM_ONBOOT:
+ 		ret = conf_store_yesno(conf_h, conf->name, misc->onboot);
+ 		break;
+@@ -1858,6 +1864,9 @@
+ 	case PARAM_LOGGING:
+ 		ret = conf_parse_yesno(&vps_p->log.enable, val);
+ 		break;
++	case PARAM_INITLOG:
++		ret = conf_parse_yesno(&vps_p->res.misc.initlog, val);
++		break;
+ 	case PARAM_LOGLEVEL:
+ 		if (parse_int(val, &int_id))
+ 			break;
+@@ -2660,6 +2669,7 @@
+ 	MERGE_INT(onboot)
+ 	MERGE_P(bootorder)
+ 	MERGE_INT(wait)
++	MERGE_INT(initlog)
+ }
+ 
+ static void merge_dq(dq_param *dst, dq_param *src)
+Index: src/src/lib/env.c
+===================================================================
+--- src.orig/src/lib/env.c	2011-05-02 06:28:16.000000000 +0200
++++ src/src/lib/env.c	2011-05-02 06:28:21.000000000 +0200
+@@ -23,6 +23,7 @@
+ #include <signal.h>
+ #include <fcntl.h>
+ #include <sys/types.h>
++#include <sys/stat.h>
+ #include <sys/wait.h>
+ #include <string.h>
+ #include <grp.h>
+@@ -305,7 +306,7 @@
+ 	int fd, ret;
+ 	vps_res *res;
+ 	char *argv[] = {"init", "-z", "      ", NULL};
+-	char *envp[] = {"HOME=/", "TERM=linux", NULL};
++	char *envp[] = {"HOME=/", "TERM=linux", NULL, NULL};
+ 
+ 	res = (vps_res *) data;
+ 	memset(&create_param, 0, sizeof(create_param));
+@@ -412,12 +413,65 @@
+ 	*/
+ 	if (read(wait_p, &ret, sizeof(ret)) == 0)
+ 		return 0;
+-	if ((fd = open("/dev/null", O_RDWR)) != -1) {
+-		dup2(fd, 0);
+-		dup2(fd, 1);
+-		dup2(fd, 2);
+-	}
++
+ 	logger(10, 0, "Starting init");
++
++	if (((fd = open("/dev/null", O_RDWR)) != -1) && (fd == STDIN_FILENO)) {
++
++		dup2(fd, 1); // STDOUT = /dev/null
++		dup2(fd, 2); // STDERR = /dev/null
++
++		if (res->misc.initlog == 1) {
++		        int pid;
++
++			if (!((mkfifo ("/var/log/init.fifo", 0600) == 0) || (errno == EEXIST))) {
++			        logger(-1, errno, "unable to create init fifo");
++				return 0;
++			}
++
++			// create new /dev/console ==> /var/log/init.fifo
++			unlink ("/dev/console");
++			symlink ("/var/log/init.fifo", "/dev/console");
++
++			pid = fork();
++
++			if (pid == -1) {
++			        logger(-1, errno, "unable to fork init-logger");
++				return 0;
++			}
++
++			if (!pid) {
++
++			        close(wait_p); close(err_p);
++
++				/* Note: open fifo RDWR to avoid EOF */
++				close(STDIN_FILENO);
++				open("/var/log/init.fifo", O_RDWR);
++
++				close(STDOUT_FILENO);
++				open("/var/log/init.log", O_CREAT|O_WRONLY|O_TRUNC);
++
++				close(STDERR_FILENO);
++				dup2(STDOUT_FILENO, STDERR_FILENO);
++
++				execl("/sbin/init-logger", NULL);
++				exit (-1);
++			}
++
++			close(STDOUT_FILENO);
++			if (open("/var/log/init.fifo", O_WRONLY) == -1) {
++			        logger(-1, errno, "open init.fifo failed");
++				return 0;
++			}
++
++			close(STDERR_FILENO);
++			dup2(STDOUT_FILENO, STDERR_FILENO);
++
++			// tell init to use /var/log/init.fifo
++			envp[2] = "CONSOLE=/var/log/init.fifo";
++		}
++	}
++
+ 	execve("/sbin/init", argv, envp);
+ 	execve("/etc/init", argv, envp);
+ 	execve("/bin/init", argv, envp);
+@@ -433,6 +487,20 @@
+ {
+ 	int ret, pid;
+ 
++        char ildest[4096];
++
++        *ildest = 0;
++        strcat (ildest, res->fs.root);
++        strcat (ildest, "/sbin/init");
++
++        *ildest = 0;
++        strcat (ildest, res->fs.root);
++        strcat (ildest, "/sbin/init-logger");
++        if (cp_file (ildest, "/usr/lib/vzctl/scripts/init-logger") != 0) {
++                logger(-1, 0, "Unable to copy init-logger");
++                return VZ_RESOURCE_ERROR;
++        }
++
+ 	if ((ret = vz_chroot(res->fs.root)))
+ 		return ret;
+ 	if ((ret = vz_setluid(veid)))
+Index: src/scripts/init-logger.c
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ src/scripts/init-logger.c	2011-05-02 06:28:21.000000000 +0200
+@@ -0,0 +1,163 @@
++/*
++
++     Copyright (C) 2008 Proxmox Server Solutions GmbH
++
++     This program is free software; you can redistribute it and/or modify
++     it under the terms of the GNU General Public License as published by
++     the Free Software Foundation; version 2 dated June, 1991.
++
++     This program is distributed in the hope that it will be useful,
++     but WITHOUT ANY WARRANTY; without even the implied warranty of
++     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++     GNU General Public License for more details.
++
++     You should have received a copy of the GNU General Public License
++     along with this program; if not, write to the Free Software Foundation,
++     Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
++     You should have received a copy of the GNU General Public License
++
++     Author: Dietmar Maurer <dietmar@proxmox.com>
++
++     Compile statically using dietlibc:
++     diet -Os gcc -static -s -o init-logger.ARCH init-logger.c
++*/
++
++#include <sys/types.h>
++#include <sys/wait.h>
++#include <stdlib.h>
++#include <unistd.h>
++#include <errno.h>
++#include <stdio.h>
++#include <signal.h>
++#include <sys/select.h>
++
++/* Set a signal handler */
++static void
++setsig(struct sigaction *sa, int sig,
++		   void (*fun)(int), int flags)
++{
++	sa->sa_handler = fun;
++	sa->sa_flags = flags;
++	sigemptyset(&sa->sa_mask);
++	sigaction(sig, sa, NULL);
++}
++
++static int terminate = 0;
++
++void
++term_handler()
++{
++	terminate = 1;
++}
++
++ssize_t
++safe_read (int fd, char *buf, size_t count)
++{
++	ssize_t n;
++
++	do {
++		n = read (fd, buf, count);
++	} while (n < 0 && errno == EINTR);
++
++	return n;
++}
++
++ssize_t
++safe_write (int fd, char *buf, size_t count)
++{
++	ssize_t n;
++
++	do {
++		n = write (fd, buf, count);
++	} while (n < 0 && errno == EINTR);
++
++	return n;
++}
++
++int
++full_write(int fd, char *buf, size_t len)
++{
++	size_t n;
++	size_t total;
++
++	total = 0;
++
++	while (len > 0) {
++	        n = safe_write(fd, buf, len);
++
++		if (n < 0)
++		        break;
++
++		buf += n;
++		total += n;
++		len -= n;
++	}
++
++	return total;
++}
++
++static void
++simple_cat (void)
++{
++        int bufsize = 256;
++	char buf[bufsize];
++	size_t n_read;
++	int noop_count = 0;
++
++	fd_set rfds;
++	struct timeval tv;
++	int retval;
++
++	FD_ZERO(&rfds);
++	FD_SET(STDIN_FILENO, &rfds);
++
++	tv.tv_sec = 1;
++	tv.tv_usec = 0;
++
++	while ((retval = select(STDIN_FILENO + 1, &rfds, NULL, NULL, &tv)) >= 0 ||
++	       (errno == EINTR)) {
++
++		tv.tv_sec = 1;
++		tv.tv_usec = 0;
++
++		FD_ZERO(&rfds);
++		FD_SET(STDIN_FILENO, &rfds);
++
++		if (retval == -1 && errno == EINTR)
++		    continue;
++
++		if (retval) {
++			n_read = safe_read (STDIN_FILENO, buf, bufsize);
++			if (n_read ==  ((size_t) -1))
++				return;
++
++			noop_count = 0;
++
++			if (full_write (STDOUT_FILENO, buf, n_read) != n_read)
++				return;
++		} else {
++			if (terminate)
++				noop_count++;
++		}
++
++		if (noop_count >= 2)
++			return;
++	}
++}
++
++int
++main(int argc, char * argv[])
++{
++	struct sigaction sa;
++
++	setsig(&sa, SIGTERM, term_handler, SA_RESTART);
++	setsig(&sa, SIGINT, term_handler, SA_RESTART);
++
++	printf ("starting init logger\n");
++
++	simple_cat();
++
++	printf ("\ninit logger finished\n");
++
++	exit (0);
++}

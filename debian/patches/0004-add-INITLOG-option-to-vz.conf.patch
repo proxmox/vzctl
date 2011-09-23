@@ -1,0 +1,28 @@
+From d84b559cdc367d976ce94bcbd6d30f4f918f6cda Mon Sep 17 00:00:00 2001
+From: Dietmar Maurer <dietmar@proxmox.com>
+Date: Tue, 20 Sep 2011 06:33:58 +0200
+Subject: [PATCH 4/4] add INITLOG option to vz.conf
+
+
+Signed-off-by: Dietmar Maurer <dietmar@proxmox.com>
+---
+ etc/vz.conf |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git a/etc/vz.conf b/etc/vz.conf
+index 63e509a..d2072e7 100644
+--- a/etc/vz.conf
++++ b/etc/vz.conf
+@@ -10,6 +10,9 @@ LOGFILE=/var/log/vzctl.log
+ LOG_LEVEL=0
+ VERBOSE=0
+ 
++## log output of init process to $VE_ROOT/var/log/init.log
++INITLOG=yes
++
+ ## Disk quota parameters
+ DISK_QUOTA=yes
+ VZFASTBOOT=no
+-- 
+1.5.6.5
+

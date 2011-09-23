@@ -1,0 +1,7 @@
+0001-add-init-logger-support-to-vzctl.patch
+0002-add-the-init-logger-binary.patch
+0003-add-initlog-feature-to-manual-page.patch
+0004-add-INITLOG-option-to-vz.conf.patch
+fix-init-script.patch
+fix-vzevent-init.patch
+fix-default-template.diff

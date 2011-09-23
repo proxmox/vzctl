@@ -1,0 +1,13 @@
+Index: src/configure.ac
+===================================================================
+--- src.orig/configure.ac	2011-05-02 06:28:10.000000000 +0200
++++ src/configure.ac	2011-05-02 06:28:26.000000000 +0200
+@@ -51,6 +51,8 @@
+ AC_PROG_LIBTOOL
+ AC_PROG_INSTALL
+ AC_PROG_LN_S
++AC_PROG_MKDIR_P
++AC_SUBST([MKDIR_P])
+ 
+ # Checks for libraries.
+ AC_CHECK_LIB(dl, dlopen,

@@ -1,0 +1,57 @@
+#!/usr/bin/perl -w
+
+# remove OpenVZ specific settings from /etc/sysctl.conf
+# and move them to /etc/sysctl.d/vzctl.conf
+
+use strict;
+
+open(TMP, "/etc/sysctl.conf") || die "can't open sysctl.conf";
+
+my $sysctl_out = '';
+my $vzctl_out = '';
+
+my $found;
+my $skip;
+
+while(defined(my $line = <TMP>)) {
+    if ($line =~ m/^#-- OpenVZ begin/i) {
+	$found = 1;
+	$skip = 1;
+	next;
+    }
+    if ($line =~ m/^#-- OpenVZ end/i) {
+	$found = 1;
+	$skip = 0;
+	next;
+    }
+
+    if ($skip) {
+	if ($line =~ m/^net\.ipv4\.conf\.default\.forwarding\s*=\s*1\s*$/) {
+	    $vzctl_out .= "net.ipv4.ip_forward=1\n"
+	}
+	$vzctl_out .= $line;
+    } else {
+	$sysctl_out .= $line;
+    }
+}
+
+close (TMP);
+
+if ($found) {
+    if ($vzctl_out) {
+	print "moving openvz sysctl settings to /etc/sysctl.d/vzctl.conf\n";
+	open (OUT, ">/etc/sysctl.d/vzctl.conf") || 
+	    die "cant't open '/etc/sysctl.d/vzctl.conf' - $!";
+	my $res = print OUT $vzctl_out;
+	die "write failed" if !$res;
+	close OUT;
+    }
+
+    open (OUT, ">/etc/sysctl.conf") || 
+	die "cant't open '/etc/sysctl.conf' - $!";
+    my $res = print OUT $sysctl_out;
+    die "write failed" if !$res;
+    close OUT;
+}
+
+exit(0);

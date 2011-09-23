@@ -1,0 +1,30 @@
+From 2d81e37f1414a2b18ad668f7dd8a00c391c5d908 Mon Sep 17 00:00:00 2001
+From: Dietmar Maurer <dietmar@proxmox.com>
+Date: Tue, 20 Sep 2011 06:32:17 +0200
+Subject: [PATCH 3/4] add initlog feature to manual page
+
+
+Signed-off-by: Dietmar Maurer <dietmar@proxmox.com>
+---
+ man/ctid.conf.5 |    5 +++++
+ 1 files changed, 5 insertions(+), 0 deletions(-)
+
+diff --git a/man/ctid.conf.5 b/man/ctid.conf.5
+index d3ec3d0..ecda4ae 100644
+--- a/man/ctid.conf.5
++++ b/man/ctid.conf.5
+@@ -30,6 +30,11 @@ Specifies whether this container will be started during system boot.
+ Default is \fBno\fR, meaning the container will not be started
+ if \fBONBOOT\fR parameter is omitted.
+ Corresponds to the \fB--onboot\fR option.
++.IP \fBINITLOG\fR="\fByes\fR|\fBno\fR"
++If enabled init output is logged to /var/log/init.log. An additional process started
++inside the container (init-logger) reads the output from init and writes it
++to /var/log/init.log.
++Corresponds to the \fB--initlog\fR option.
+ .IP \fBBOOTORDER\fR="\fInumber\fR"
+ Specifies the CT boot order priority. Corresponds to the
+ \fB--bootorder\fR option.
+-- 
+1.5.6.5
+

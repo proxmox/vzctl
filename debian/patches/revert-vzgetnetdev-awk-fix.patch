@@ -1,0 +1,14 @@
+Index: vzctlnew/scripts/vps-functions.in
+===================================================================
+--- vzctlnew.orig/scripts/vps-functions.in	2010-08-06 11:40:31.000000000 +0200
++++ vzctlnew/scripts/vps-functions.in	2010-08-06 11:40:41.000000000 +0200
+@@ -100,8 +100,7 @@
+ 	/^[0-9]+: / {
+ 		dev="";
+ 	}
+-	/^[0-9]+: / && /\<UP\>/ && !/\<LOOPBACK\>/ \
+-			&& !/\<SLAVE\>/ && !/\<NOARP\>/ {
++	/^[0-9]+: / && /UP/ && !/LOOPBACK/ && !/SLAVE/ && !/NOARP/ {
+ 		if ($2 !~ /^veth[0-9]+/)
+ 			dev=$2;
+ 	}

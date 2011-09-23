@@ -1,0 +1,3 @@
+vzctl: package-name-doesnt-match-sonames libvzctl-0.0.3
+vzctl: statically-linked-binary ./usr/lib/vzctl/scripts/init-logger
+vzctl: package-contains-empty-directory usr/lib/vzctl/modules/

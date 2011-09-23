@@ -1,0 +1,262 @@
+vzctl for Debian (dso)
+----------------------
+
+See http://openvz.org/ for information to OpenVZ !
+
+The debian.systs.org-Flavour (-dso) comes with some changes to the origin :
+
+ * On install and remove process: the sysctl modification are done automatically.
+ * Default dist-scripts is set to debian.
+ * Default OS-Template is a Debian Template, not a Fedora!
+ * /etc/init.d/vz script can be used with [b|d]ash and debian's busybox,
+   which make smaller system possible.
+
+TODO:
+-----
+ * inspect all relevant script, when using without shell "bash"
+ * use the right program syntax, i.e ip a l -> ip addr show
+ * Useing debconf as config interface, for some OpenVZ settings ?
+
+
+Network configuration:
+----------------------
+
+If you want network access for the virtual servers (VE),
+you need some sysctl settings.
+See file /etc/sysctl.conf.
+
+Relevant settings:
+
+#-- OpenVZ begin --#
+
+# On Hardware Node we generally need
+# packet forwarding enabled and proxy arp disabled
+net.ipv4.conf.default.forwarding=1
+net.ipv4.conf.default.proxy_arp = 0
+
+# Enables source route verification
+net.ipv4.conf.all.rp_filter = 1
+
+# Enables the magic-sysrq key
+kernel.sysrq = 1
+
+# TCP Explict Congestion Notification
+net.ipv4.tcp_ecn = 0
+
+# we do not want all our interfaces to send redirects
+net.ipv4.conf.default.send_redirects = 1
+net.ipv4.conf.all.send_redirects = 0
+
+#-- OpenVZ end --#
+
+
+In some cases you may need to enable proxy_arp for the network devices
+that you want your virtual hosts to be accessible on.
+
+  sysctl -w net.ipv4.conf.$DEV.proxy_arp=1
+
+You can add this to a specific interface in the network configuration
+(/etc/network/interfaces) by the following lines, i.e. :
+
+[...]
+# device: %DEV%			# DEVICE
+iface %DEV% inet static		# use static IP handling
+    address 192.168.1.1		# IP_ADDRESS
+    netmask 255.255.255.0	# NETWORK MASK
+    network 192.168.1.0		# NETWORK
+    broadcast 192.168.2.255	# BROADCAST
+    gateway 192.168.1.1		# GATEWAY
+
+    up sysctl -w net.ipv4.conf.%DEV%.proxy_arp=0
+    pre-down sysctl -w net.ipv4.conf.%DEV%.proxy_arp=1
+[...]
+
+Replace %DEV% with your device name (ie. eth0).
+
+See man-page: man interfaces
+
+
+Note:
+
+ OpenVZ use a FAKENET for venet devices in VE, defined at
+ /etc/vz/dists/script/functions:
+
+    * FAKEGATEWAY=192.0.2.1
+    * FAKEGATEWAYNET=192.0.2.0
+
+
+File structure:
+---------------
+
+The functionality that openvz provide require that a directory structure is
+created. On a Debian installation it is by default located in /var/lib/vz,
+which is different from the normal OpenVZ /vz directory.
+
+So create a symbolic link from /var/lib/vz to /vz:
+
+ ln -s /var/lib/vz /vz
+
+
+
+Create an OpenVZ OS Template:
+----------------------------
+
+You can find more information on the openvz wiki pages
+http://wiki.openvz.org/Debian_template_creation.
+
+Below is one example on how to create a OS Template.
+with debootstrap :  Debian 4.0 (aka etch) on i386
+
+  Example: TemplateDIR: /var/lib/vz/tempate/debian/4.0/i386
+  Mirror(s):  use a German mirror: -> ftp.de.debian.org,
+
+  debootstrap 	\
+	--exclude=modutils,module-init-tools,pciutils,laptop-detect,dmidecode	\
+	--include=iproute,ssh,psmisc,quota	\
+	--arch i386 				\
+	etch					\
+	/var/lib/vz/tempate/debian/4.0/i386 	\
+	http://ftp.de.debian.org/debian
+
+  HINT: Please use a debian mirror:
+  
+    http://ftp.<mirror>.debian.org/debian
+    e.g. <mirror>:
+	de -> German
+	dk -> Denmark
+	ru -> Rusland
+	...
+	    
+  Read more at http://www.debian.org/mirror/list
+  		
+
+When debootstrap has finished successfully the OS Template need
+a configuration:
+
+01. SET hostname, to localhost
+
+   echo localhost > /var/lib/vz/tempate/debian/4.0/i386/etc/hostname
+
+
+02. Disable getty in /etc/inittab
+
+   sed -i -e '/getty/d' /var/lib/vz/tempate/debian/4.0/i386/etc/inittab
+
+
+03. Link /etc/mtab to /proc/mtab to make mount work as expected.
+
+   rm -f /var/lib/vz/tempate/debian/4.0/i386/etc/mtab
+   ln -s /proc/mounts /var/lib/vz/tempate/debian/4.0/i386/etc/mtab
+
+
+04. Add secuity related Stuff to /etc/apt/sources.list:
+
+   echo "deb http://ftp.de.debian.org/debian-security etch/updates main" \
+	>> /var/lib/vz/tempate/debian/4.0/i386/etc/apt/sources.list
+   
+   Hint: Or use a mirror (See. Hint above!)
+
+
+05. Add a ve-start-ssh-keygen-script:
+
+    cat << EOF > /var/lib/vz/tempate/debian/4.0/i386/rc2.d/S15ssh_gen_host_keys
+#!/bin/bash
+ssh-keygen -f /etc/ssh/ssh_host_rsa_key -t rsa -N ''
+ssh-keygen -f /etc/ssh/ssh_host_dsa_key -t dsa -N ''
+rm -f \$0
+EOF
+
+    chroot /var/lib/vz/tempate/debian/4.0/i386/ chmod a+x /etc/rc2.d/S15ssh_gen_host_keys
+    or
+    chmod a+x /var/lib/vz/tempate/debian/4.0/i386/etc/rc2.d/S15ssh_gen_host_keys
+
+
+06. Disable root login and fix permission of /root
+
+    chroot /var/lib/vz/tempate/debian/4.0/i386/ usermod -L root
+    chmod 700 /var/lib/vz/tempate/debian/4.0/i386/root
+
+
+07. Create symbolic link for modutils, pciutils
+
+    chroot /var/lib/vz/tempate/debian/4.0/i386/ ln -s /bin/true /sbin/modprobe
+    chroot /var/lib/vz/tempate/debian/4.0/i386/ ln -s /bin/true /sbin/insmod
+    chroot /var/lib/vz/tempate/debian/4.0/i386/ ln -s /bin/true /sbin/rmmod
+    chroot /var/lib/vz/tempate/debian/4.0/i386/ ln -s /bin/true /sbin/lsmod
+    chroot /var/lib/vz/tempate/debian/4.0/i386/ ln -s /bin/true /usr/bin/lspci
+  
+08. Remove quotarpc from start levels
+
+    chroot /var/lib/vz/tempate/debian/4.0/i386/ update-rc.d -f quotarpc remove
+
+09. Update your packages:
+
+    chroot /var/lib/vz/tempate/debian/4.0/i386 apt-get update
+    chroot /var/lib/vz/tempate/debian/4.0/i386 apt-get upgrade
+  
+    HINT: Set your timezone setting to your needs.
+    HINT: On an ssh (security!) update you need to clean
+	  the precreated ssh_keys again! (See 5.)
+
+
+10. Make your OS-Template more shrink-able
+    
+    cd /var/lib/vz/tempate/debian/4.0/i386/
+
+    # clean resolv.conf
+    echo "etc/resolv.conf"	>> ../exclude.i386
+
+    # clean /root/.bash_history and .aptitude
+    echo "root/.aptitude"	>> ../exclude.i386
+    echo "root/.bash_history"	>> ../exclude.i386
+
+    # clear /tmp
+    find tmp/ -mindepth 1	>> ../exclude.i386
+
+    # clear /var/log/
+    echo "var/log/aptitude"	>> ../exclude.i386
+    echo "var/log/dpkg.log"	>> ../exclude.i386
+   
+    # clear unused apt-get files
+    find var/cache/apt/ -type f ! -name "lock" >> ../exclude.i386
+    find var/lib/apt/ -type f ! -name "lock" >> ../exclude.i386
+    find var/lib/aptitude/ -type f >> ../exclude.i386
+
+    # clean generated ssh_keys
+    find etc/ssh/ -type -f -name '*host*' >> ../exclude.i386
+    
+    # For better handling the user root bash-settings:
+    # cp etc/skel/.bash* to root/
+   
+11. Create OS Template
+   
+    tar -X ../exclude.i386 -czf /var/lib/vz/template/cache/debian-4.0-i386-minimal.tar.gz ./
+   
+
+12. Use your created OS-Template building a VE
+
+    Hint:  Set your default OS Template in /etc/vz/vz.conf
+	   TEMPLATE="debian-4.0-i386-minimal.tar.gz", so you need
+	   no --ostemplate option use default templates on VE_Create!
+
+    vzctl create <VEID> --ostemplate debian-4.0-i386-minimal
+      
+    vzctl set <VEID> --nameserver <add_you_first_nameserver_ip> \
+		     --nameserver <add_you_second_nameserver_ip> \
+		     --searchdomain <add_your_search_domain> \
+		     --ipadd <add_an_ip>	\
+		     --save
+
+    vzctl set <VEID> --userpasswd root:xxxx
+   
+    vzctl start <VEID>
+   
+    Read more on man-page(s): man vzctl
+   
+
+13. Update your OpenVZ OS Template:
+
+    Goto Step 09. and rebuild your OS-Template again !
+	    
+
+ -- Proxmox Support Team <support@proxmox.com>, Mon,  2 May 2011 12:19:51 +0200

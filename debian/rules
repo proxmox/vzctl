@@ -1,0 +1,110 @@
+#!/usr/bin/make -f
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+# These are used for cross-compiling and for saving the configure script
+# from having to guess our platform (since we know it already)
+DEB_HOST_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
+OS_DEB_VERSION 	    ?= $(shell cat /etc/debian_version)
+VZCTL_DEBVERSION    ?= $(shell dpkg-parsechangelog | grep ^Version | sed "s/Version: //")
+VZCTL_VERSION       ?= $(shell echo $(VZCTL_DEBVERSION) | cut -d '-' -f 1)
+
+ifneq "$(wildcard /usr/share/quilt/quilt.make)" ""
+include /usr/share/quilt/quilt.make
+endif
+
+CFLAGS = -Wall -g
+
+ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+	CFLAGS += -O0
+else
+	CFLAGS += -O2
+endif
+
+config.status:  configure
+	dh_testdir
+	sed -i "s/'$(VZCTL_VERSION)'/'$(VZCTL_DEBVERSION)'/g" configure
+	./configure \
+	    --host=$(DEB_HOST_GNU_TYPE) \
+	    --build=$(DEB_BUILD_GNU_TYPE) \
+	    --prefix=/usr 		\
+	    --sysconfdir=/etc		\
+	    --localstatedir=/var	\
+	    --enable-bashcomp		\
+	    --enable-logrotate  	\
+	    CFLAGS="$(CFLAGS)"
+
+build: patch build-stamp
+build-stamp:  config.status
+	dh_testdir
+	$(MAKE) vzdir=/var/lib/vz
+	touch $@
+
+clean: unpatch
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp 
+	-$(MAKE) distclean
+	dh_clean 
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k 
+	dh_installdirs
+	$(MAKE) DESTDIR=$(CURDIR)/debian/vzctl \
+		install \
+		install-debian \
+		vzdir=/var/lib/vz
+	
+	# debianize vz.conf
+	sed -i \
+	    -e 's/\/vz\//\/var\/lib\/vz\//' \
+	    $(CURDIR)/debian/vzctl/etc/vz/vz.conf
+	
+	# set default dist-script to debian
+	install -m 644 $(CURDIR)/etc/dists/debian.conf $(CURDIR)/debian/vzctl/etc/vz/dists/default
+	
+	# rename the bash_completion.d/vzctl.sh for debian to vzctl
+	mv $(CURDIR)/debian/vzctl/etc/bash_completion.d/vzctl.sh $(CURDIR)/debian/vzctl/etc/bash_completion.d/vzctl
+	
+
+	# Remove unused file from libtool
+	rm -rf $(CURDIR)/debian/vzctl/usr/lib/*.la
+	rm -rf $(CURDIR)/debian/vzctl/usr/lib/*.a
+	
+	# unset Debian Version on vzctl
+	sed -i "s/'$(VZCTL_DEBVERSION)'/'$(VZCTL_VERSION)'/g" configure
+
+	# install sysctl file
+	install -m 644 $(CURDIR)/debian/sysctl $(CURDIR)/debian/vzctl/etc/sysctl.d/vzctl.conf
+
+	# lintian overrides
+	install -m 644 $(CURDIR)/debian/vzctl.override $(CURDIR)/debian/vzctl/usr/share/lintian/overrides/vzctl
+
+# Build architecture-independent files here.
+binary-indep: build install
+
+# Build architecture-dependent files here.
+binary-arch: build install
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs ChangeLog
+	dh_installdocs
+	dh_installexamples
+	dh_installman
+	dh_link
+	dh_strip
+	dh_compress
+	dh_fixperms
+	dh_makeshlibs
+	dh_installdeb
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install 

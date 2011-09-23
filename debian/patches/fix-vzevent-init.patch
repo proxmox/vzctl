@@ -1,0 +1,25 @@
+Index: new/etc/init.d/vzeventd-redhat.in
+===================================================================
+--- new.orig/etc/init.d/vzeventd-redhat.in	2011-05-30 07:01:38.000000000 +0200
++++ new/etc/init.d/vzeventd-redhat.in	2011-05-30 07:10:19.000000000 +0200
+@@ -27,6 +27,11 @@
+ prog=vzeventd
+ lockfile=$VARLOCK/$prog
+ 
++if ! test -d /proc/vz ; then
++    # NOTE: Running kernel is not OpenVZ kernel.
++    exit 0
++fi
++
+ load_module() {
+ 	modprobe vzevent reboot_event=1
+ }
+@@ -61,7 +66,7 @@
+ 	[ -f $lockfile ] && exit 0 # Already running
+ 
+ 	load_module
+-	check || exit 1
++	check || exit 0
+ 
+ 	echo -n $"Starting $prog: "
+ 	vzdaemon_start $prog $OPTIONS

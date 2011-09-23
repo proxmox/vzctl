@@ -1,0 +1,13 @@
+Index: vzctlnew/etc/dists/scripts/redhat-add_ip.sh
+===================================================================
+--- vzctlnew.orig/etc/dists/scripts/redhat-add_ip.sh	2010-08-06 10:45:36.000000000 +0200
++++ vzctlnew/etc/dists/scripts/redhat-add_ip.sh	2010-08-06 10:46:01.000000000 +0200
+@@ -56,7 +56,7 @@
+ 	# Set /etc/sysconfig/network
+ 	put_param $NETFILE NETWORKING yes
+ 	# Set default route to venet0
+-	put_param $NETFILE GATEWAYDEV ${VENETDEV}
++	put_param $NETFILE GATEWAYDEV ${VENET_DEV}
+ 	# Remove old (obsoleted) fake route
+ 	del_param $NETFILE GATEWAY
+ 	[ -f "${IFCFG_DIR}/route-venet0" ] && rm -f ${IFCFG_DIR}/route-venet0

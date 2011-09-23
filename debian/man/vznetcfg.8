@@ -1,0 +1,24 @@
+.TH vznetcfg 8 "1 May 2007" "OpenVZ" "Virtual Environments"
+.SH NAME
+vznetcfg \- helper program used by vzctl set network settings of veth device in VE0 and VE.
+.SH SYNOPSIS
+vznetcfg init veth \fBVETH_DEVICE\fR
+.SH DESCRIPTION
+Virtual ethernet device is an ethernet-like device which can be used inside a VE. Unlike venet network device, veth device has a MAC address. Due to this, it can be used in configurations, when veth is bridged to ethX or other device and VE user fully sets up his networking himself, including IPs, gateways etc.
+Virtual ethernet device consist of two ethernet devices - one in VE0 and another one in VE. These devices are connected to each other, so if a packet goes to one device it will come out from the other device. 
+.SH OPTIONS
+.TP
+\fBVETH_DEVICE\fR
+Specify the Virtual ethernet device.
+.SH SEE ALSO
+.BR vzctl (8)
+.P
+The Virtual Ethernet Device HOWTO show more details using a veth device.
+See
+.BR "http://wiki.openvz.org/Virtual_Ethernet_device"
+.SH LICENSE
+Copyright (C) 2000-2007, SWsoft. Licensed under GNU GPL.
+.SH "AUTHOR" 
+.PP 
+This manual page was written by Thorsten Schifferdecker <tsd@debian.systs.org> for 
+the \fBDebian GNU/Linux\fP system (but may be used by others).
