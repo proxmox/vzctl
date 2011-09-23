@@ -1,0 +1,13 @@
+Index: new/paths.am
+===================================================================
+--- new.orig/paths.am	2011-09-23 13:54:56.000000000 +0200
++++ new/paths.am	2011-09-23 13:55:10.000000000 +0200
+@@ -24,7 +24,7 @@
+ endif
+ 
+ if ENABLE_UDEV
+-udevdir     = $(sysconfdir)/udev/rules.d
++udevdir     = /lib/udev/rules.d
+ endif
+ 
+ initddir    = $(sysconfdir)/init.d

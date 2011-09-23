@@ -1,4 +1,4 @@
-RELEASE=1.9
+RELEASE=2.0
 
 SVER=3.0.29
 PACKAGERELEASE=2pve1
@@ -11,15 +11,16 @@ VZCTL_BRANCH=vzctl-3.0.29.2
 
 all: ${DEB}
 
-vzctl-${SVER}.org/COPYING:
-	git clone git://git.openvz.org/pub/vzctl vzctl-${SVER}.org
-	# git branch -D local
-	cd vzctl-${SVER}.org; git checkout -b local ${VZCTL_BRANCH}	
+vzctl-${SVER}.org/COPYING: vzctl-${SVER}.org.tgz
+	tar xzf $<
 	touch $@
 
-vzctl-${SVER}.tgz: vzctl-${SVER}.org/COPYING
-	tar czf $@.tmp vzctl-${SVER}.org
-	mv $@.tmp $@
+.PHONY: download
+vzctl-${SVER}.org.tgz download:
+	rm -rf vzctl-${SVER}.org vzctl-${SVER}.org.tgz
+	git clone git://git.openvz.org/pub/vzctl vzctl-${SVER}.org
+	cd vzctl-${SVER}.org; git branch ${VZCTL_BRANCH}
+	tar czf vzctl-${SVER}.org.tgz vzctl-${SVER}.org
 
 
 vzctl-${SVER}/debian/control: vzctl-${SVER}.org/COPYING
@@ -29,7 +30,9 @@ vzctl-${SVER}/debian/control: vzctl-${SVER}.org/COPYING
 	cd vzctl-${SVER}; ./autogen.sh
 	touch $@
 
-${DEB}: vzctl-${SVER}/debian/control
+
+.PHONY: deb
+${DEB} deb: vzctl-${SVER}/debian/control
 	chmod +x vzctl-${SVER}/debian/rules
 	cd vzctl-${SVER}; dpkg-buildpackage -b -rfakeroot -us -uc
 	lintian ${DEB}
@@ -53,3 +56,8 @@ distclean: clean
 .PHONY: clean
 clean:
 	rm -rf vzctl-${SVER} vzctl_${SVER}* *~ debian/*~ debian/patches/*~ *.tmp a.out
+
+.PHONY: dinstall
+dinstall: deb
+	dpkg -i ${DEB}
+
