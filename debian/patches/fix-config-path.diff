@@ -1,0 +1,26 @@
+Index: new/include/types.h
+===================================================================
+--- new.orig/include/types.h	2011-09-26 11:54:22.000000000 +0200
++++ new/include/types.h	2011-09-26 12:00:55.000000000 +0200
+@@ -21,7 +21,7 @@
+ #define VZ_DIR			PKGCONFDIR "/"
+ #define GLOBAL_CFG		VZ_DIR "vz.conf"
+ #define OSRELEASE_CFG		VZ_DIR "osrelease.conf"
+-#define VPS_CONF_DIR		VZ_DIR "conf/"
++#define VPS_CONF_DIR		"/etc/pve/openvz/"
+ #define LIB_SCRIPTS_DIR		PKGLIBDIR "/scripts/"
+ #define DIST_DIR		VZ_DIR "dists"
+ #define VENAME_DIR		VZ_DIR "names"
+Index: new/paths.am
+===================================================================
+--- new.orig/paths.am	2011-09-26 07:35:16.000000000 +0200
++++ new/paths.am	2011-09-26 07:36:40.000000000 +0200
+@@ -32,7 +32,7 @@
+ ifupdir     = $(sysconfdir)/network/if-up.d
+ 
+ pkgconfdir  = $(sysconfdir)/vz
+-vpsconfdir  = $(pkgconfdir)/conf
++vpsconfdir  = $(sysconfdir)/pve/openvz
+ distconfdir = $(pkgconfdir)/dists
+ namesdir    = $(pkgconfdir)/names
+ 

@@ -58,23 +58,23 @@ install: build
 		install \
 		install-debian \
 		vzdir=/var/lib/vz
-	
+
 	# debianize vz.conf
 	sed -i \
 	    -e 's/\/vz\//\/var\/lib\/vz\//' \
 	    $(CURDIR)/debian/vzctl/etc/vz/vz.conf
-	
+
 	# set default dist-script to debian
 	install -m 644 $(CURDIR)/etc/dists/debian.conf $(CURDIR)/debian/vzctl/etc/vz/dists/default
-	
+
 	# rename the bash_completion.d/vzctl.sh for debian to vzctl
 	mv $(CURDIR)/debian/vzctl/etc/bash_completion.d/vzctl.sh $(CURDIR)/debian/vzctl/etc/bash_completion.d/vzctl
-	
+
 
 	# Remove unused file from libtool
 	rm -rf $(CURDIR)/debian/vzctl/usr/lib/*.la
 	rm -rf $(CURDIR)/debian/vzctl/usr/lib/*.a
-	
+
 	# unset Debian Version on vzctl
 	sed -i "s/'$(VZCTL_DEBVERSION)'/'$(VZCTL_VERSION)'/g" configure
 
@@ -83,6 +83,11 @@ install: build
 
 	# lintian overrides
 	install -m 644 $(CURDIR)/debian/vzctl.override $(CURDIR)/debian/vzctl/usr/share/lintian/overrides/vzctl
+
+	# remove files in /etc/pve/openvz
+	rm -rf $(CURDIR)/debian/vzctl/etc/pve/openvz
+	rmdir $(CURDIR)/debian/vzctl/etc/pve
+
 
 # Build architecture-independent files here.
 binary-indep: build install

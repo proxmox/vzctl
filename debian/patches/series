@@ -6,3 +6,4 @@ fix-init-script.patch
 fix-vzevent-init.patch
 fix-default-template.diff
 fix-udev-path.diff
+fix-config-path.diff
