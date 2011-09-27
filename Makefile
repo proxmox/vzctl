@@ -38,14 +38,12 @@ ${DEB} deb: vzctl-${SVER}/debian/control
 	lintian ${DEB}
 
 .PHONY: upload
-upload: vzctl-${SVER}.tgz ${DEB}
+upload: ${DEB}
 	umount /pve/${RELEASE}; mount /pve/${RELEASE} -o rw 
 	mkdir -p /pve/${RELEASE}/extra
 	rm -f /pve/${RELEASE}/extra/${PACKAGE}_*.deb
-	rm -f /pve/${RELEASE}/install/vzctl-*.tgz
 	rm -f /pve/${RELEASE}/extra/Packages*
 	cp ${DEB} /pve/${RELEASE}/extra
-	cp vzctl-${SVER}.tgz /pve/${RELEASE}/install
 	cd /pve/${RELEASE}/extra; dpkg-scanpackages . /dev/null > Packages; gzip -9c Packages > Packages.gz
 	umount /pve/${RELEASE}; mount /pve/${RELEASE} -o ro
 
