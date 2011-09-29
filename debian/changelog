@@ -1,3 +1,9 @@
+vzctl (3.0.29-3pve1) unstable; urgency=low
+
+  * update to 3.0.29.3
+
+ -- Proxmox Support Team <support@proxmox.com>  Thu, 29 Sep 2011 10:59:49 +0200
+
 vzctl (3.0.29-2pve1) unstable; urgency=low
 
   * update to 3.0.29.2
