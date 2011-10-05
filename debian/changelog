@@ -1,3 +1,9 @@
+vzctl (3.0.29-3pve2) unstable; urgency=low
+
+  * fix config path in vznetaddbr
+
+ -- Proxmox Support Team <support@proxmox.com>  Wed, 05 Oct 2011 09:09:50 +0200
+
 vzctl (3.0.29-3pve1) unstable; urgency=low
 
   * update to 3.0.29.3

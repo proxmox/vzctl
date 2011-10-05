@@ -7,3 +7,4 @@ fix-vzevent-init.patch
 fix-default-template.diff
 fix-udev-path.diff
 fix-config-path.diff
+fix-vznetaddbr-conf-path.diff
