@@ -1,3 +1,13 @@
+vzctl (3.0.29-3pve3) unstable; urgency=low
+
+  * fix config path in vzmigrate
+  
+  * symlink /etc/vz/conf to /etc/pve/openvz
+  
+  * do not make backups of config files on destroy
+
+ -- Proxmox Support Team <support@proxmox.com>  Thu, 17 Nov 2011 07:54:34 +0100
+
 vzctl (3.0.29-3pve2) unstable; urgency=low
 
   * fix config path in vznetaddbr

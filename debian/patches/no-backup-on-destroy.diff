@@ -1,0 +1,45 @@
+Index: new/src/lib/destroy.c
+===================================================================
+--- new.orig/src/lib/destroy.c	2011-11-17 09:23:13.000000000 +0100
++++ new/src/lib/destroy.c	2011-11-17 09:35:20.000000000 +0100
+@@ -295,7 +295,7 @@
+ 	logger(0, 0, "Destroying container private area: %s", fs->private);
+ 	if ((ret = vps_destroy_dir(veid, fs->private)))
+ 		return ret;
+-	move_config(veid, BACKUP);
++	move_config(veid, DESTR_ALL);
+ 	if (rmdir(fs->root) < 0)
+ 		logger(-1, errno, "Warning: failed to remove %s", fs->root);
+ 	logger(0, 0, "Container private area was destroyed");
+Index: new/include/util.h
+===================================================================
+--- new.orig/include/util.h	2011-11-17 09:32:06.000000000 +0100
++++ new/include/util.h	2011-11-17 09:35:31.000000000 +0100
+@@ -25,6 +25,7 @@
+ 
+ #define BACKUP		0
+ #define DESTR		1
++#define DESTR_ALL	2
+ 
+ #define PROCMEM		"/proc/meminfo"
+ #define PROCTHR		"/proc/sys/kernel/threads-max"
+Index: new/src/lib/util.c
+===================================================================
+--- new.orig/src/lib/util.c	2011-11-17 09:36:31.000000000 +0100
++++ new/src/lib/util.c	2011-11-17 09:38:57.000000000 +0100
+@@ -558,7 +558,14 @@
+ 
+ 	snprintf(conf, sizeof(conf), VPS_CONF_DIR "%d.%s", veid, prefix);
+ 	snprintf(newconf, sizeof(newconf), "%s." DESTR_PREFIX, conf);
+-	action == BACKUP ? rename(conf, newconf) : unlink(newconf);
++	if (action == BACKUP) {
++		rename(conf, newconf);
++	} else if (action == DESTR_ALL) {
++		unlink(conf);
++		unlink(newconf);
++	} else if (action == DESTR) {
++		unlink(newconf);
++	}
+ }
+ 
+ /* Renames or removes CT config and various CT scripts.

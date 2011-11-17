@@ -88,6 +88,11 @@ install: build
 	rm -rf $(CURDIR)/debian/vzctl/etc/pve/openvz
 	rmdir $(CURDIR)/debian/vzctl/etc/pve
 
+	# remove files in /etc/vz/conf (symlink to /etc/pve/openvz)
+	rm -rf $(CURDIR)/debian/vzctl/etc/vz/conf
+	# we create the symlink to /etc/pve/openvz inside the preinst script
+
+
 
 # Build architecture-independent files here.
 binary-indep: build install
