@@ -7,9 +7,8 @@ Standards-Version: 3.7.2
 
 Package: vzctl
 Architecture: i386 ia64 amd64 powerpc sparc
-Depends: ${shlibs:Depends}, vzquota (>= 2.7.0-4), iproute, procps
+Depends: ${shlibs:Depends}, vzquota (>= 2.7.0-4), iproute, procps, pve-cluster
 Recommends: rsync, openssh-client
-Suggests: vzctl-ostemplate, ovzkernel
 Description: OpenVZ - server virtualization solution - control tools
  OpenVZ is an Operating System-level server virtualization solution, built
  on Linux. OpenVZ creates isolated, secure virtual private servers (VE) on
