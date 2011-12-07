@@ -8,3 +8,4 @@ fix-default-template.diff
 fix-udev-path.diff
 fix-config-path.diff
 no-backup-on-destroy.diff
+fix-init.d-depends.diff

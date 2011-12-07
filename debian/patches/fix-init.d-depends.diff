@@ -1,0 +1,15 @@
+Index: new/etc/init.d/vz-redhat.in
+===================================================================
+--- new.orig/etc/init.d/vz-redhat.in	2011-12-07 12:42:45.000000000 +0100
++++ new/etc/init.d/vz-redhat.in	2011-12-07 12:43:53.000000000 +0100
+@@ -25,8 +25,8 @@
+ 
+ ### BEGIN INIT INFO
+ # Provides: vz
+-# Required-start: $network $remote_fs $syslog
+-# Required-stop:  $network $remote_fs $syslog
++# Required-start: pve-cluster $network $remote_fs $syslog
++# Required-stop:  pve-cluster $network $remote_fs $syslog
+ # Should-Start:  sshd vzeventd
+ # Should-Stop:  sshd vzeventd
+ # Default-Start: 2 3 4 5
