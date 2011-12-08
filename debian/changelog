@@ -1,3 +1,9 @@
+vzctl (3.0.29-3pve6) unstable; urgency=low
+
+  * do not change paths in vzmigrate - we do not use that tool
+
+ -- Proxmox Support Team <support@proxmox.com>  Thu, 08 Dec 2011 11:46:06 +0100
+
 vzctl (3.0.29-3pve5) unstable; urgency=low
 
   * add pve-cluster dependency in /etc/init.d/vz 
