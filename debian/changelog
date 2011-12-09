@@ -1,3 +1,9 @@
+vzctl (3.0.29-3pve7) unstable; urgency=low
+
+  * avoid backup error on new installation
+
+ -- Proxmox Support Team <support@proxmox.com>  Fri, 09 Dec 2011 17:00:43 +0100
+
 vzctl (3.0.29-3pve6) unstable; urgency=low
 
   * do not change paths in vzmigrate - we do not use that tool

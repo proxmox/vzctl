@@ -20,6 +20,12 @@ set -e
 case "$1" in
     configure)
 	ldconfig
+
+	# use symlink to /etc/pve/openvz
+	if [ ! -L "/etc/vz/conf" ]; then
+	    ln -s /etc/pve/openvz /etc/vz/conf
+	fi
+
 	# make sure we correct sysctl settings
 	/usr/share/doc/vzctl/examples/update_sysctl_conf
 	if [ -f "/etc/sysctl.d/vzctl" ] ; then

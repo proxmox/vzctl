@@ -26,12 +26,13 @@ case "$1" in
 	# move old config out of the way - newer version
 	# use a symlink to /etc/pve/openvz
 	if [ ! -L "/etc/vz/conf" ]; then
-	    if [ -e "/etc/vz/conf.org" ]; then
-		echo "unable to backup existing configuration"
-		exit 1
+	    if [ -e "/etc/vz/conf" ]; then 
+		if [ -e "/etc/vz/conf.org" ]; then
+		    echo "unable to backup existing configuration"
+		    exit 1
+		fi
+		mv /etc/vz/conf /etc/vz/conf.org
 	    fi
-	    mv /etc/vz/conf /etc/vz/conf.org
-	    ln -s /etc/pve/openvz /etc/vz/conf
 	fi
 
 	# compability mode /var/lib/vz -> /vz
