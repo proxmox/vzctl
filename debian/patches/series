@@ -9,3 +9,4 @@ fix-udev-path.diff
 fix-config-path.diff
 no-backup-on-destroy.diff
 fix-init.d-depends.diff
+allow-abs-ostemplate-path.diff
