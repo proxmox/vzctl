@@ -6,7 +6,7 @@ net.ipv4.conf.default.forwarding=1
 net.ipv4.conf.default.proxy_arp = 0
 
 # Enables source route verification
-net.ipv4.conf.all.rp_filter = 1
+net.ipv4.conf.all.rp_filter = 2
 
 # Enables the magic-sysrq key
 kernel.sysrq = 1
