@@ -1,7 +1,7 @@
 Index: new/etc/init.d/vzeventd-redhat.in
 ===================================================================
---- new.orig/etc/init.d/vzeventd-redhat.in	2011-05-30 07:01:38.000000000 +0200
-+++ new/etc/init.d/vzeventd-redhat.in	2011-05-30 07:10:19.000000000 +0200
+--- new.orig/etc/init.d/vzeventd-redhat.in	2012-02-10 06:33:24.000000000 +0100
++++ new/etc/init.d/vzeventd-redhat.in	2012-02-10 06:39:55.000000000 +0100
 @@ -27,6 +27,11 @@
  prog=vzeventd
  lockfile=$VARLOCK/$prog
@@ -14,7 +14,7 @@ Index: new/etc/init.d/vzeventd-redhat.in
  load_module() {
  	modprobe vzevent reboot_event=1
  }
-@@ -61,7 +66,7 @@
+@@ -59,7 +64,7 @@
  	[ -f $lockfile ] && exit 0 # Already running
  
  	load_module

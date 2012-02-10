@@ -1,64 +1,65 @@
 Index: new/src/lib/create.c
 ===================================================================
---- new.orig/src/lib/create.c	2011-09-29 11:02:02.000000000 +0200
-+++ new/src/lib/create.c	2011-12-22 12:00:55.000000000 +0100
-@@ -83,17 +83,21 @@
+--- new.orig/src/lib/create.c	2012-02-10 06:33:24.000000000 +0100
++++ new/src/lib/create.c	2012-02-10 07:09:43.000000000 +0100
+@@ -102,20 +102,25 @@
  	const char *ext[] = { "", ".gz", ".bz2", ".xz", NULL };
  	const char *errmsg_ext = "[.gz|.bz2|.xz]";
  
+-find:
 -	for (i = 0; ext[i] != NULL; i++) {
--		snprintf(tarball, sizeof(tarball), "%s/%s.tar%s",
--				fs->tmpl, tar_nm, ext[i]);
+-		snprintf(tarball, sizeof(tarball), "%s/cache/%s.tar%s",
+-				fs->tmpl, tmpl->ostmpl, ext[i]);
 -		logger(1, 0, "Looking for %s", tarball);
 -		if (stat_file(tarball))
 -			break;
 -	}
 -	if (ext[i] == NULL) {
--		logger(-1, 0, "Cached OS template %s/%s.tar%s not found",
--				fs->tmpl, tar_nm, errmsg_ext);
+-		if (download_template(tmpl->ostmpl) == 0)
+-			goto find;
+-		logger(-1, 0, "Cached OS template %s/cache/%s.tar%s not found",
+-				fs->tmpl, tmpl->ostmpl, errmsg_ext);
 -		return VZ_OSTEMPLATE_NOT_FOUND;
-+	if (tar_nm[0] == '/' && stat_file(tar_nm)) {
-+		snprintf(tarball, sizeof(tarball), "%s", tar_nm);
++	if (tmpl->ostmpl[0] == '/' && stat_file(tmpl->ostmpl)) {
++		snprintf(tarball, sizeof(tarball), "%s", tmpl->ostmpl);
 +	} else {
++
++	find:
 +		for (i = 0; ext[i] != NULL; i++) {
-+			snprintf(tarball, sizeof(tarball), "%s/%s.tar%s",
-+				 fs->tmpl, tar_nm, ext[i]);
++			snprintf(tarball, sizeof(tarball), "%s/cache/%s.tar%s",
++				 fs->tmpl, tmpl->ostmpl, ext[i]);
 +			logger(1, 0, "Looking for %s", tarball);
 +			if (stat_file(tarball))
 +				break;
 +		}
 +		if (ext[i] == NULL) {
-+			logger(-1, 0, "Cached OS template %s/%s.tar%s not found",
-+			       fs->tmpl, tar_nm, errmsg_ext);
++			if (download_template(tmpl->ostmpl) == 0)
++				goto find;
++			logger(-1, 0, "Cached OS template %s/cache/%s.tar%s not found",
++			       fs->tmpl, tmpl->ostmpl, errmsg_ext);
 +			return VZ_OSTEMPLATE_NOT_FOUND;
 +		}
  	}
  	/* Lock CT area */
  	if (make_dir(fs->private, 0))
-@@ -168,6 +172,7 @@
- 	char tar_nm[256];
+@@ -190,6 +195,7 @@
+ 	int ret = 0;
  	char src[STR_SIZE];
  	char dst[STR_SIZE];
 +	char *p;
  	const char *sample_config;
  	fs_param *fs = &vps_p->res.fs;
  	tmpl_param *tmpl = &vps_p->res.tmpl;
-@@ -288,7 +293,17 @@
- 				tmpl->ostmpl = full_ostmpl;
- 			}
+@@ -312,6 +318,12 @@
  		}
--		snprintf(tar_nm, sizeof(tar_nm), "cache/%s", tmpl->ostmpl);
-+		if (tmpl->ostmpl[0] == '/') {
-+			snprintf(tar_nm, sizeof(tar_nm), "%s", tmpl->ostmpl);
-+			if ((p = strrchr(tmpl->ostmpl, '/'))) {
-+				p = strdup(p + 1);
-+				free(tmpl->ostmpl);
-+				tmpl->ostmpl = p;
-+			}
-+		} else {
-+			snprintf(tar_nm, sizeof(tar_nm), "cache/%s", tmpl->ostmpl);
-+		}
+ 		if ((ret = fs_create(veid, fs, tmpl, &vps_p->res.dq)))
+ 			goto err_private;
 +
- 		logger(0, 0, "Creating container private area (%s)",
- 				tmpl->ostmpl);
- 		if ((ret = fs_create(veid, fs, tmpl, &vps_p->res.dq, tar_nm)))
++		if ((p = strrchr(tmpl->ostmpl, '/'))) {
++			p = strdup(p + 1);
++			free(tmpl->ostmpl);
++			tmpl->ostmpl = p;
++		}
+ 	}
+ 
+ 	if ((ret = vps_postcreate(veid, &vps_p->res)))

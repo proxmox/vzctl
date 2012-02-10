@@ -12,10 +12,10 @@ Signed-off-by: Dietmar Maurer <dietmar@proxmox.com>
  2 files changed, 167 insertions(+), 0 deletions(-)
  create mode 100644 scripts/init-logger.c
 
-diff --git a/scripts/Makefile.am b/scripts/Makefile.am
-index 5b28c6e..3d25b6a 100644
---- a/scripts/Makefile.am
-+++ b/scripts/Makefile.am
+Index: new/scripts/Makefile.am
+===================================================================
+--- new.orig/scripts/Makefile.am	2012-02-10 06:33:24.000000000 +0100
++++ new/scripts/Makefile.am	2012-02-10 06:39:40.000000000 +0100
 @@ -17,7 +17,11 @@
  
  include $(top_srcdir)/pathsubst.am
@@ -26,13 +26,12 @@ index 5b28c6e..3d25b6a 100644
  vzlib_SCRIPTS = \
 +        init-logger \
  	vps-create \
+ 	vps-download \
  	vps-functions \
- 	vps-net_add \
-diff --git a/scripts/init-logger.c b/scripts/init-logger.c
-new file mode 100644
-index 0000000..1153b1b
---- /dev/null
-+++ b/scripts/init-logger.c
+Index: new/scripts/init-logger.c
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ new/scripts/init-logger.c	2012-02-10 06:39:40.000000000 +0100
 @@ -0,0 +1,163 @@
 +/*
 +
@@ -197,6 +196,3 @@ index 0000000..1153b1b
 +
 +	exit (0);
 +}
--- 
-1.5.6.5
-

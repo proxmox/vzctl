@@ -1,3 +1,11 @@
+vzctl (3.0.30-2pve1) unstable; urgency=low
+
+  * update to vzctl 3.0.30.2
+  
+  * set default rp_filter to mode 2
+
+ -- Proxmox Support Team <support@proxmox.com>  Fri, 10 Feb 2012 06:34:58 +0100
+
 vzctl (3.0.29-3pve8) unstable; urgency=low
 
   * allow to pass absolute paths for ostemplate on create

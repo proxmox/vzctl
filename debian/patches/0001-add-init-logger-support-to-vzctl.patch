@@ -12,11 +12,11 @@ Signed-off-by: Dietmar Maurer <dietmar@proxmox.com>
  src/lib/env.c         |   80 +++++++++++++++++++++++++++++++++++++++++++++----
  4 files changed, 86 insertions(+), 6 deletions(-)
 
-diff --git a/include/res.h b/include/res.h
-index 2ad3d5b..e70be48 100644
---- a/include/res.h
-+++ b/include/res.h
-@@ -57,6 +57,7 @@ typedef struct {
+Index: new/include/res.h
+===================================================================
+--- new.orig/include/res.h	2012-02-10 06:33:24.000000000 +0100
++++ new/include/res.h	2012-02-10 06:37:47.000000000 +0100
+@@ -57,6 +57,7 @@
  	int onboot;
  	unsigned long *bootorder;
  	int wait;
@@ -24,23 +24,23 @@ index 2ad3d5b..e70be48 100644
  } misc_param;
  
  struct mod_action;
-diff --git a/include/vzctl_param.h b/include/vzctl_param.h
-index ff520da..9245b6a 100644
---- a/include/vzctl_param.h
-+++ b/include/vzctl_param.h
-@@ -136,6 +136,7 @@
- #define PARAM_BOOTORDER		364
- #define PARAM_PCI_ADD		365
+Index: new/include/vzctl_param.h
+===================================================================
+--- new.orig/include/vzctl_param.h	2012-02-10 06:33:24.000000000 +0100
++++ new/include/vzctl_param.h	2012-02-10 06:39:10.000000000 +0100
+@@ -138,6 +138,7 @@
  #define PARAM_PCI_DEL		366
-+#define PARAM_INITLOG		367
+ #define PARAM_RAM		367
+ #define PARAM_SWAP		368
++#define PARAM_INITLOG		369
  
  #define PARAM_LINE		"e:p:f:t:i:l:k:a:b:n:x:h"
  #endif
-diff --git a/src/lib/config.c b/src/lib/config.c
-index baef108..bcbfbd5 100644
---- a/src/lib/config.c
-+++ b/src/lib/config.c
-@@ -62,6 +62,7 @@ static vps_config config[] = {
+Index: new/src/lib/config.c
+===================================================================
+--- new.orig/src/lib/config.c	2012-02-10 06:33:24.000000000 +0100
++++ new/src/lib/config.c	2012-02-10 06:37:47.000000000 +0100
+@@ -62,6 +62,7 @@
  {"LOG_LEVEL",	NULL, PARAM_LOGLEVEL},
  {"LOGFILE",	NULL, PARAM_LOGFILE},
  {"VERBOSE",	NULL, PARAM_VERBOSE},
@@ -48,7 +48,7 @@ index baef108..bcbfbd5 100644
  
  {"IPTABLES",	NULL, PARAM_IPTABLES},
  /*	UB	*/
-@@ -121,6 +122,8 @@ static vps_config config[] = {
+@@ -121,6 +122,8 @@
  {"CPULIMIT",	NULL, PARAM_CPULIMIT},
  {"CPUS",	NULL, PARAM_VCPUS},
  {"CPUMASK",	NULL, PARAM_CPUMASK},
@@ -57,7 +57,7 @@ index baef108..bcbfbd5 100644
  /* create param	*/
  {"ONBOOT",	NULL, PARAM_ONBOOT},
  {"CONFIGFILE",	NULL, PARAM_CONFIG},
-@@ -1273,6 +1276,9 @@ static int store_misc(vps_param *old_p, vps_param *vps_p, vps_config *conf,
+@@ -1313,6 +1316,9 @@
  
  	ret = 0;
  	switch (conf->id) {
@@ -67,7 +67,7 @@ index baef108..bcbfbd5 100644
  	case PARAM_ONBOOT:
  		ret = conf_store_yesno(conf_h, conf->name, misc->onboot);
  		break;
-@@ -1887,6 +1893,9 @@ static int parse(envid_t veid, vps_param *vps_p, char *val, int id)
+@@ -1927,6 +1933,9 @@
  	case PARAM_LOGGING:
  		ret = conf_parse_yesno(&vps_p->log.enable, val);
  		break;
@@ -77,7 +77,7 @@ index baef108..bcbfbd5 100644
  	case PARAM_LOGLEVEL:
  		if (parse_int(val, &int_id))
  			return ERR_INVAL;
-@@ -2710,6 +2719,7 @@ static void merge_misc(misc_param *dst, misc_param *src)
+@@ -2753,6 +2762,7 @@
  	MERGE_INT(onboot)
  	MERGE_P(bootorder)
  	MERGE_INT(wait)
@@ -85,10 +85,10 @@ index baef108..bcbfbd5 100644
  }
  
  static void merge_dq(dq_param *dst, dq_param *src)
-diff --git a/src/lib/env.c b/src/lib/env.c
-index 5e53657..135286f 100644
---- a/src/lib/env.c
-+++ b/src/lib/env.c
+Index: new/src/lib/env.c
+===================================================================
+--- new.orig/src/lib/env.c	2012-02-10 06:33:24.000000000 +0100
++++ new/src/lib/env.c	2012-02-10 06:37:47.000000000 +0100
 @@ -23,6 +23,7 @@
  #include <signal.h>
  #include <fcntl.h>
@@ -97,7 +97,7 @@ index 5e53657..135286f 100644
  #include <sys/wait.h>
  #include <sys/stat.h>
  #include <string.h>
-@@ -318,7 +319,7 @@ static int _env_create(vps_handler *h, envid_t veid, int wait_p, int err_p,
+@@ -318,7 +319,7 @@
  	int fd, ret;
  	vps_res *res;
  	char *argv[] = {"init", "-z", "      ", NULL};
@@ -106,7 +106,7 @@ index 5e53657..135286f 100644
  
  	res = (vps_res *) data;
  	memset(&create_param, 0, sizeof(create_param));
-@@ -425,12 +426,65 @@ try:
+@@ -425,12 +426,65 @@
  	*/
  	if (read(wait_p, &ret, sizeof(ret)) == 0)
  		return 0;
@@ -177,7 +177,7 @@ index 5e53657..135286f 100644
  	execve("/sbin/init", argv, envp);
  	execve("/etc/init", argv, envp);
  	execve("/bin/init", argv, envp);
-@@ -446,6 +500,20 @@ static int vz_real_env_create(vps_handler *h, envid_t veid, vps_res *res,
+@@ -446,6 +500,20 @@
  {
  	int ret, pid;
  
@@ -198,6 +198,3 @@ index 5e53657..135286f 100644
  	if ((ret = vz_chroot(res->fs.root)))
  		return ret;
  	if ((ret = vz_setluid(veid)))
--- 
-1.5.6.5
-
