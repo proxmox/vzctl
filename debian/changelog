@@ -1,3 +1,9 @@
+vzctl (3.0.30-2pve2) unstable; urgency=low
+
+  * fix bug in preinstall script (do not backup empty dir)
+
+ -- Proxmox Support Team <support@proxmox.com>  Tue, 06 Mar 2012 07:41:40 +0100
+
 vzctl (3.0.30-2pve1) unstable; urgency=low
 
   * update to vzctl 3.0.30.2
