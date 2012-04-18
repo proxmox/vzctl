@@ -1,3 +1,9 @@
+vzctl (3.0.30-2pve3) unstable; urgency=low
+
+  * fix bug #128 and #171: use 'pvectl' inside /etc/init.d/vz.
+
+ -- Proxmox Support Team <support@proxmox.com>  Wed, 18 Apr 2012 10:20:25 +0200
+
 vzctl (3.0.30-2pve2) unstable; urgency=low
 
   * fix bug in preinstall script (do not backup empty dir)
