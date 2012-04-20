@@ -1,3 +1,10 @@
+vzctl (3.0.30-2pve4) unstable; urgency=low
+
+  * do not start any VEs with openvz init script. This is now done 
+  inside /etc/init.d/pve-manager
+
+ -- Proxmox Support Team <support@proxmox.com>  Fri, 20 Apr 2012 09:22:56 +0200
+
 vzctl (3.0.30-2pve3) unstable; urgency=low
 
   * fix bug #128 and #171: use 'pvectl' inside /etc/init.d/vz.
