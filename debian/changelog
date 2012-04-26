@@ -1,3 +1,9 @@
+vzctl (3.0.30-2pve5) unstable; urgency=low
+
+  * depend on libpve-storage-perl (make sure it is configured after clvm)
+
+ -- Proxmox Support Team <support@proxmox.com>  Thu, 26 Apr 2012 07:48:46 +0200
+
 vzctl (3.0.30-2pve4) unstable; urgency=low
 
   * do not start any VEs with openvz init script. This is now done 
