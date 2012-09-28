@@ -1,13 +1,13 @@
-RELEASE=2.1
+RELEASE=2.2
 
-SVER=3.0.30
-PACKAGERELEASE=2pve5
+SVER=4.0
+PACKAGERELEASE=1pve1
 ARCH=amd64
 
 PACKAGE=vzctl
 DEB=${PACKAGE}_${SVER}-${PACKAGERELEASE}_${ARCH}.deb
 
-VZCTL_BRANCH=vzctl-3.0.30.2
+VZCTL_BRANCH=master  # vzctl-4.0 does not exist
 
 all: ${DEB}
 
@@ -18,8 +18,7 @@ vzctl-${SVER}.org/COPYING: vzctl-${SVER}.org.tgz
 .PHONY: download
 vzctl-${SVER}.org.tgz download:
 	rm -rf vzctl-${SVER}.org vzctl-${SVER}.org.tgz
-	git clone git://git.openvz.org/pub/vzctl vzctl-${SVER}.org
-	cd vzctl-${SVER}.org; git branch ${VZCTL_BRANCH}
+	git clone git://git.openvz.org/pub/vzctl -b ${VZCTL_BRANCH} vzctl-${SVER}.org
 	tar czf vzctl-${SVER}.org.tgz vzctl-${SVER}.org
 
 

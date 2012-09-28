@@ -1,12 +1,11 @@
 Index: new/src/lib/create.c
 ===================================================================
---- new.orig/src/lib/create.c	2012-02-10 06:33:24.000000000 +0100
-+++ new/src/lib/create.c	2012-02-10 07:09:43.000000000 +0100
-@@ -102,20 +102,25 @@
- 	const char *ext[] = { "", ".gz", ".bz2", ".xz", NULL };
- 	const char *errmsg_ext = "[.gz|.bz2|.xz]";
- 
--find:
+--- new.orig/src/lib/create.c	2012-09-28 09:05:45.000000000 +0200
++++ new/src/lib/create.c	2012-09-28 09:57:03.000000000 +0200
+@@ -113,19 +113,25 @@
+ 	if (ploop && check_ploop_size(dq->diskspace[1]) < 0)
+ 		return VZ_DISKSPACE_NOT_SET;
+ find:
 -	for (i = 0; ext[i] != NULL; i++) {
 -		snprintf(tarball, sizeof(tarball), "%s/cache/%s.tar%s",
 -				fs->tmpl, tmpl->ostmpl, ext[i]);
@@ -20,11 +19,11 @@ Index: new/src/lib/create.c
 -		logger(-1, 0, "Cached OS template %s/cache/%s.tar%s not found",
 -				fs->tmpl, tmpl->ostmpl, errmsg_ext);
 -		return VZ_OSTEMPLATE_NOT_FOUND;
++
 +	if (tmpl->ostmpl[0] == '/' && stat_file(tmpl->ostmpl)) {
 +		snprintf(tarball, sizeof(tarball), "%s", tmpl->ostmpl);
 +	} else {
 +
-+	find:
 +		for (i = 0; ext[i] != NULL; i++) {
 +			snprintf(tarball, sizeof(tarball), "%s/cache/%s.tar%s",
 +				 fs->tmpl, tmpl->ostmpl, ext[i]);
@@ -42,7 +41,7 @@ Index: new/src/lib/create.c
  	}
  	/* Lock CT area */
  	if (make_dir(fs->private, 0))
-@@ -190,6 +195,7 @@
+@@ -236,6 +242,7 @@
  	int ret = 0;
  	char src[STR_SIZE];
  	char dst[STR_SIZE];
@@ -50,10 +49,10 @@ Index: new/src/lib/create.c
  	const char *sample_config;
  	fs_param *fs = &vps_p->res.fs;
  	tmpl_param *tmpl = &vps_p->res.tmpl;
-@@ -312,6 +318,12 @@
- 		}
- 		if ((ret = fs_create(veid, fs, tmpl, &vps_p->res.dq)))
- 			goto err_private;
+@@ -364,6 +371,12 @@
+ 						vps_p->opt.layout,
+ 						vps_p->opt.mode)))
+ 			goto err_root;
 +
 +		if ((p = strrchr(tmpl->ostmpl, '/'))) {
 +			p = strdup(p + 1);

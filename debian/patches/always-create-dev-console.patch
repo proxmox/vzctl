@@ -1,0 +1,14 @@
+Index: new/src/lib/env.c
+===================================================================
+--- new.orig/src/lib/env.c	2012-09-28 10:57:31.000000000 +0200
++++ new/src/lib/env.c	2012-09-28 11:04:38.000000000 +0200
+@@ -279,6 +279,9 @@
+ 		dup2(fd, 2);
+ 	}
+ 
++	unlink("/dev/console");
++	mknod("/dev/console", S_IFCHR | 0622, makedev(5, 1));
++
+ 	logger(10, 0, "Starting init");
+ 	execve("/sbin/init", argv, envp);
+ 	execve("/etc/init", argv, envp);

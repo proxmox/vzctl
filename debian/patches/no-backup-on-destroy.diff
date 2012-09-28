@@ -1,8 +1,8 @@
 Index: new/src/lib/destroy.c
 ===================================================================
---- new.orig/src/lib/destroy.c	2012-02-10 06:33:24.000000000 +0100
-+++ new/src/lib/destroy.c	2012-02-10 06:42:00.000000000 +0100
-@@ -307,7 +307,7 @@
+--- new.orig/src/lib/destroy.c	2012-09-28 09:05:45.000000000 +0200
++++ new/src/lib/destroy.c	2012-09-28 09:41:49.000000000 +0200
+@@ -271,7 +271,7 @@
  	logger(0, 0, "Destroying container private area: %s", fs->private);
  	if ((ret = vps_destroy_dir(veid, fs->private)))
  		return ret;
@@ -13,9 +13,9 @@ Index: new/src/lib/destroy.c
  	if (rmdir(fs->root) < 0)
 Index: new/include/util.h
 ===================================================================
---- new.orig/include/util.h	2012-02-10 06:33:24.000000000 +0100
-+++ new/include/util.h	2012-02-10 06:40:25.000000000 +0100
-@@ -25,6 +25,7 @@
+--- new.orig/include/util.h	2012-09-28 09:05:45.000000000 +0200
++++ new/include/util.h	2012-09-28 09:41:49.000000000 +0200
+@@ -24,6 +24,7 @@
  
  #define BACKUP		0
  #define DESTR		1
@@ -25,9 +25,9 @@ Index: new/include/util.h
  #define PROCTHR		"/proc/sys/kernel/threads-max"
 Index: new/src/lib/util.c
 ===================================================================
---- new.orig/src/lib/util.c	2012-02-10 06:33:24.000000000 +0100
-+++ new/src/lib/util.c	2012-02-10 06:40:25.000000000 +0100
-@@ -558,7 +558,14 @@
+--- new.orig/src/lib/util.c	2012-09-28 09:05:45.000000000 +0200
++++ new/src/lib/util.c	2012-09-28 09:41:49.000000000 +0200
+@@ -613,7 +613,14 @@
  
  	snprintf(conf, sizeof(conf), VPS_CONF_DIR "%d.%s", veid, prefix);
  	snprintf(newconf, sizeof(newconf), "%s." DESTR_PREFIX, conf);

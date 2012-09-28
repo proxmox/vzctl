@@ -1,20 +1,20 @@
 Index: new/include/types.h
 ===================================================================
---- new.orig/include/types.h	2011-11-17 08:05:21.000000000 +0100
-+++ new/include/types.h	2011-11-17 08:05:45.000000000 +0100
+--- new.orig/include/types.h	2012-09-28 09:05:45.000000000 +0200
++++ new/include/types.h	2012-09-28 09:41:31.000000000 +0200
 @@ -21,7 +21,7 @@
  #define VZ_DIR			PKGCONFDIR "/"
  #define GLOBAL_CFG		VZ_DIR "vz.conf"
  #define OSRELEASE_CFG		VZ_DIR "osrelease.conf"
 -#define VPS_CONF_DIR		VZ_DIR "conf/"
 +#define VPS_CONF_DIR		"/etc/pve/openvz/"
- #define LIB_SCRIPTS_DIR		PKGLIBDIR "/scripts/"
  #define DIST_DIR		VZ_DIR "dists"
  #define VENAME_DIR		VZ_DIR "names"
+ 
 Index: new/paths.am
 ===================================================================
---- new.orig/paths.am	2011-11-17 08:05:21.000000000 +0100
-+++ new/paths.am	2011-11-17 08:05:45.000000000 +0100
+--- new.orig/paths.am	2012-09-28 09:38:39.000000000 +0200
++++ new/paths.am	2012-09-28 09:39:27.000000000 +0200
 @@ -32,7 +32,7 @@
  ifupdir     = $(sysconfdir)/network/if-up.d
  
@@ -26,8 +26,8 @@ Index: new/paths.am
  
 Index: new/bin/vznetaddbr.in
 ===================================================================
---- new.orig/bin/vznetaddbr.in	2011-11-17 08:02:47.000000000 +0100
-+++ new/bin/vznetaddbr.in	2011-11-17 08:05:45.000000000 +0100
+--- new.orig/bin/vznetaddbr.in	2012-09-28 09:05:45.000000000 +0200
++++ new/bin/vznetaddbr.in	2012-09-28 09:39:27.000000000 +0200
 @@ -2,7 +2,7 @@
  #
  # Add virtual network interfaces (veth's) in a container to a bridge on CT0
@@ -39,10 +39,10 @@ Index: new/bin/vznetaddbr.in
  NETIFLIST=$(printf %s "$NETIF" |tr ';' '\n')
 Index: new/etc/init.d/vz-redhat.in
 ===================================================================
---- new.orig/etc/init.d/vz-redhat.in	2011-11-17 08:06:26.000000000 +0100
-+++ new/etc/init.d/vz-redhat.in	2011-11-17 08:07:06.000000000 +0100
+--- new.orig/etc/init.d/vz-redhat.in	2012-09-28 09:05:45.000000000 +0200
++++ new/etc/init.d/vz-redhat.in	2012-09-28 09:39:27.000000000 +0200
 @@ -41,7 +41,7 @@
- . @VZLIBDIR@/initd-functions
+ . @SCRIPTDIR@/initd-functions
  
  VZQUOTA=@SBINDIR@/vzquota
 -CONFIG_DIR=@PKGCONFDIR@/conf

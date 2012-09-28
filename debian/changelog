@@ -1,3 +1,11 @@
+vzctl (4.0-1pve1) unstable; urgency=low
+
+  * update to latest vztcl
+  
+  * removed init logger patches
+
+ -- Proxmox Support Team <support@proxmox.com>  Fri, 28 Sep 2012 10:10:49 +0200
+
 vzctl (3.0.30-2pve5) unstable; urgency=low
 
   * depend on libpve-storage-perl (make sure it is configured after clvm)

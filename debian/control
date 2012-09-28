@@ -2,12 +2,12 @@ Source: vzctl
 Section: admin
 Priority: optional
 Maintainer: Proxmox Support Team <support@proxmox.com>
-Build-Depends: debhelper (>= 5), quilt, dietlibc-dev
+Build-Depends: debhelper (>= 5), quilt, libcgroup-dev (>= 0.38-1)
 Standards-Version: 3.7.2
 
 Package: vzctl
 Architecture: i386 ia64 amd64 powerpc sparc
-Depends: ${shlibs:Depends}, vzquota (>= 2.7.0-4), iproute, procps, pve-cluster, libpve-storage-perl
+Depends: ${shlibs:Depends}, vzquota (>= 3.1-1), iproute, procps, pve-cluster, libpve-storage-perl, libcgroup1 (>= 0.38-1)
 Recommends: rsync, openssh-client
 Description: OpenVZ - server virtualization solution - control tools
  OpenVZ is an Operating System-level server virtualization solution, built
