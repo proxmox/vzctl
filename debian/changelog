@@ -1,3 +1,9 @@
+vzctl (4.0-1pve2) unstable; urgency=low
+
+  * depend on attr package (scripts use setfattr)
+
+ -- Proxmox Support Team <support@proxmox.com>  Tue, 02 Oct 2012 10:36:00 +0200
+
 vzctl (4.0-1pve1) unstable; urgency=low
 
   * update to latest vztcl
