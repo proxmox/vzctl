@@ -1,3 +1,9 @@
+vzctl (4.0-1pve3) unstable; urgency=low
+
+  * increase version for wheezy
+  
+ -- Proxmox Support Team <support@proxmox.com>  Wed, 27 Mar 2013 10:33:49 +0100
+
 vzctl (4.0-1pve2) unstable; urgency=low
 
   * depend on attr package (scripts use setfattr)
