@@ -1,3 +1,9 @@
+vzctl (4.0-1pve4) unstable; urgency=low
+
+  * fix bug #461: keep bridge MTU
+
+ -- Proxmox Support Team <support@proxmox.com>  Fri, 04 Oct 2013 08:51:14 +0200
+
 vzctl (4.0-1pve3) unstable; urgency=low
 
   * increase version for wheezy

@@ -7,3 +7,4 @@ no-backup-on-destroy.diff
 fix-init.d-depends.diff
 allow-abs-ostemplate-path.diff
 always-create-dev-console.patch
+keep-bridge-MTU.patch
