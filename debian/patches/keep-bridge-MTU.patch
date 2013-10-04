@@ -1,13 +1,13 @@
 Index: new/bin/vznetaddbr.in
 ===================================================================
 --- new.orig/bin/vznetaddbr.in	2013-10-04 09:09:45.000000000 +0200
-+++ new/bin/vznetaddbr.in	2013-10-04 09:21:04.000000000 +0200
++++ new/bin/vznetaddbr.in	2013-10-04 09:28:08.000000000 +0200
 @@ -29,8 +29,14 @@
      [ -n "$bridge" ] ||
  	bridge=vmbr0
  
 +    if [ ! -f "/sys/class/net/$bridge/mtu" ]; then
-+	echo >&2 "bridge $bridge does not exists."
++	echo >&2 "bridge '$bridge' does not exist."
 +	exit 1
 +    fi
 +
