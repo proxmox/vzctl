@@ -1,3 +1,9 @@
+vzctl (4.0-1pve5) unstable; urgency=low
+
+  * Fix unrecognized option '--all' in vzifup-post
+
+ -- Proxmox Support Team <support@proxmox.com>  Thu, 13 Mar 2014 07:40:54 +0100
+
 vzctl (4.0-1pve4) unstable; urgency=low
 
   * fix bug #461: keep bridge MTU
