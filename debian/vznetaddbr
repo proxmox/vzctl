@@ -1,0 +1,69 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use PVE::OpenVZ;
+use PVE::Tools qw(run_command);
+use PVE::Network;
+use PVE::ProcFSTools;
+
+my $vmid = $ENV{VEID};
+die "missing vmid parameter" if !$vmid;
+
+my $iface = $ARGV[2];
+die "missing iface parameter" if !$iface;
+
+my $bridgevlanf = $ARGV[3];
+die "missing bridge parameter" if !$bridgevlanf;
+
+my $conf = PVE::OpenVZ::load_config($vmid);
+
+my $ifaces = {};
+if (defined ($conf->{netif}) && $conf->{netif}->{value}) {
+	$ifaces = PVE::OpenVZ::parse_netif($conf->{netif}->{value}, $vmid);
+}
+
+my $oldbridgevlanf = undef;
+
+#read oldbridge value
+foreach my $ifname (sort keys %$ifaces) {
+
+    if($ifaces->{$ifname}->{host_ifname} eq $iface){
+	$oldbridgevlanf = $ifaces->{$ifname}->{bridge};
+
+    }
+}
+
+my $tag = undef;
+my $firewall = undef;
+my $bridge = undef;
+
+if($bridgevlanf =~ m/(vmbr(\d+))(v(\d+))?(f)?/){
+    $bridge = $1;
+    $tag = $4 if $4;
+    $firewall = $5 if $5;
+} 
+
+die "missing bridge parameter" if !$bridge;
+
+
+if($bridgevlanf ne $oldbridgevlanf){
+
+    PVE::Network::tap_unplug($iface);
+}
+
+if (-d "/sys/class/net/$iface") {
+
+    my $bridgemtu = PVE::Tools::file_read_firstline("/sys/class/net/$bridge/mtu");
+    die "bridge '$bridge' does not exist\n" if !$bridgemtu;
+    #avoid insecure dependency;
+    ($bridgemtu) = $bridgemtu =~ /(\d+)/;
+
+    PVE::Tools::run_command("/sbin/ip link set dev $iface up mtu $bridgemtu");
+    PVE::Tools::run_command("/sbin/ip addr add 0.0.0.0/0 dev $iface");
+    PVE::ProcFSTools::write_proc_entry("/proc/sys/net/ipv4/conf/$iface/proxy_arp", "1");
+    PVE::ProcFSTools::write_proc_entry("/proc/sys/net/ipv4/conf/$iface/forwarding", "1");
+    PVE::Network::tap_plug($iface, $bridge, $tag, $firewall);
+
+}
+
+exit 0;

@@ -24,19 +24,6 @@ Index: new/paths.am
  distconfdir = $(pkgconfdir)/dists
  namesdir    = $(pkgconfdir)/names
  
-Index: new/bin/vznetaddbr.in
-===================================================================
---- new.orig/bin/vznetaddbr.in	2012-09-28 09:05:45.000000000 +0200
-+++ new/bin/vznetaddbr.in	2012-09-28 09:39:27.000000000 +0200
-@@ -2,7 +2,7 @@
- #
- # Add virtual network interfaces (veth's) in a container to a bridge on CT0
- 
--CONFIGFILE=@PKGCONFDIR@/conf/$VEID.conf
-+CONFIGFILE=@VPSCONFDIR@/$VEID.conf
- . $CONFIGFILE
- 
- NETIFLIST=$(printf %s "$NETIF" |tr ';' '\n')
 Index: new/etc/init.d/vz-redhat.in
 ===================================================================
 --- new.orig/etc/init.d/vz-redhat.in	2012-09-28 09:05:45.000000000 +0200

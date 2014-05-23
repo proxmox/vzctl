@@ -95,6 +95,9 @@ install: build
 	rm -rf $(CURDIR)/debian/vzctl/etc/vz/conf
 	# we create the symlink to /etc/pve/openvz inside the preinst script
 
+	# install perl vznetaddbr version
+	install -m 644 $(CURDIR)/debian/vznetaddbr $(CURDIR)/debian/vzctl/usr/sbin/vznetaddbr
+
 
 
 # Build architecture-independent files here.
