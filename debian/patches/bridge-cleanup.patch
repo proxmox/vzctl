@@ -1,0 +1,27 @@
+From 07e05c92bb26ceb8b88dfbc4e5b9f3a8406d7268 Mon Sep 17 00:00:00 2001
+From: Alexandre Derumier <aderumier@odiso.com>
+Date: Fri, 23 May 2014 14:53:04 +0200
+Subject: [PATCH] execute proxmox.umount script on filesystem umount
+
+
+Signed-off-by: Alexandre Derumier <aderumier@odiso.com>
+---
+ src/lib/fs.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/lib/fs.c b/src/lib/fs.c
+index c02cbea..342cf7c 100644
+--- a/src/lib/fs.c
++++ b/src/lib/fs.c
+@@ -216,6 +216,8 @@ int vps_umount(vps_handler *h, envid_t veid, const fs_param *fs,
+ 			}
+ 			snprintf(buf, sizeof(buf), "%svps.%s", VPS_CONF_DIR,
+ 				UMOUNT_PREFIX);
++			snprintf(buf, sizeof(buf), "%s/proxmox.%s", SCRIPTDIR,
++				UMOUNT_PREFIX);
+ 		}
+ 	}
+ 	if (!(ret = fsumount(veid, fs)))
+-- 
+1.7.10.4
+

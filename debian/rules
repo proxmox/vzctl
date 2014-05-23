@@ -98,6 +98,9 @@ install: build
 	# install perl vznetaddbr version
 	install -m 644 $(CURDIR)/debian/vznetaddbr $(CURDIR)/debian/vzctl/usr/sbin/vznetaddbr
 
+	# install proxmox bridge cleanup script
+	install -m 644 $(CURDIR)/debian/proxmox.umount $(CURDIR)/debian/vzctl/usr/lib/vzctl/scripts/proxmox.umount
+
 
 
 # Build architecture-independent files here.

@@ -1,0 +1,26 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use PVE::OpenVZ;
+use PVE::Tools qw(run_command);
+use PVE::Network;
+use PVE::ProcFSTools;
+use Data::Dumper;
+
+my $vmid = $ENV{VEID};
+die "missing vmid parameter" if !$vmid;
+
+my $conf = PVE::OpenVZ::load_config($vmid);
+
+my $ifaces = {};
+if (defined ($conf->{netif}) && $conf->{netif}->{value}) {
+	$ifaces = PVE::OpenVZ::parse_netif($conf->{netif}->{value}, $vmid);
+}
+
+foreach my $ifname (sort keys %$ifaces) {
+    PVE::Network::tap_unplug($ifaces->{$ifname}->{host_ifname});
+}
+
+exit 0;
+
+
