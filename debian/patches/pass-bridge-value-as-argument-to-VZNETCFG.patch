@@ -1,0 +1,46 @@
+From 5a0960688341820ef7723e7bfbd159da580e93d0 Mon Sep 17 00:00:00 2001
+From: Alexandre Derumier <aderumier@odiso.com>
+Date: Sun, 11 May 2014 07:44:49 +0200
+Subject: [PATCH] pass bridge value as argument to VZNETCFG
+
+currently, only ifacename is passed to vznetcfg script. (and vznetaddbr)
+
+this is ok for vmstart,
+but if we want to change veth value online (new bridge, new vlan, new firewall)
+or hotplug a new card, with -netif_add
+
+this is not currently possible,
+because we read the bridge from vmid.conf in vznetaddbr, but vmid.conf is updated
+after -netif_add (and vznetaddbr).
+So we never have new value.
+
+This patch pass bridge value as argument to venetcfg script.
+We can now compare new and old value in vznetaddr, and see if it's an update or a new tap create.
+
+Signed-off-by: Alexandre Derumier <aderumier@odiso.com>
+---
+ src/lib/veth.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/lib/veth.c b/src/lib/veth.c
+index 2b63774..035c15c 100644
+--- a/src/lib/veth.c
++++ b/src/lib/veth.c
+@@ -63,12 +63,13 @@ static int run_vznetcfg(envid_t veid, veth_dev *dev)
+ {
+ 	int ret;
+ 	char buf[16];
+-	char *argv[] = {VZNETCFG, "init", "veth", NULL, NULL};
++	char *argv[] = {VZNETCFG, "init", "veth", NULL, NULL, NULL};
+ 	char *env[2];
+ 
+ 	if (stat_file(VZNETCFG) != 1)
+ 		return 0;
+ 	argv[3] = dev->dev_name;
++	argv[4] = dev->dev_bridge;
+ 	snprintf(buf, sizeof(buf), "VEID=%d", veid);
+ 	env[0] = buf;
+ 	env[1] = NULL;
+-- 
+1.7.10.4
+
