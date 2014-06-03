@@ -96,10 +96,10 @@ install: build
 	# we create the symlink to /etc/pve/openvz inside the preinst script
 
 	# install perl vznetaddbr version
-	install -m 644 $(CURDIR)/debian/vznetaddbr $(CURDIR)/debian/vzctl/usr/sbin/vznetaddbr
+	install -m 755 $(CURDIR)/debian/vznetaddbr $(CURDIR)/debian/vzctl/usr/sbin/vznetaddbr
 
 	# install proxmox bridge cleanup script
-	install -m 644 $(CURDIR)/debian/proxmox.umount $(CURDIR)/debian/vzctl/usr/lib/vzctl/scripts/proxmox.umount
+	install -m 755 $(CURDIR)/debian/proxmox.umount $(CURDIR)/debian/vzctl/usr/lib/vzctl/scripts/proxmox.umount
 
 
 
