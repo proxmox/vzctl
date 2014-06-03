@@ -1,3 +1,12 @@
+vzctl (4.0-1pve6) unstable; urgency=low
+
+  * vznetaddbr perl version. This allow to use vlan tag, firewall bridge 
+    and openvswitch bridge.
+  
+  * enable debian hardening-wrapper
+  
+ -- Proxmox Support Team <support@proxmox.com>  Tue, 03 Jun 2014 08:39:37 +0200
+
 vzctl (4.0-1pve5) unstable; urgency=low
 
   * Fix unrecognized option '--all' in vzifup-post
