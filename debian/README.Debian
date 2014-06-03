@@ -40,7 +40,7 @@ net.ipv4.conf.all.rp_filter = 1
 # Enables the magic-sysrq key
 kernel.sysrq = 1
 
-# TCP Explict Congestion Notification
+# TCP Explicit Congestion Notification
 net.ipv4.tcp_ecn = 0
 
 # we do not want all our interfaces to send redirects
@@ -259,4 +259,4 @@ EOF
     Goto Step 09. and rebuild your OS-Template again !
 	    
 
- -- Proxmox Support Team <support@proxmox.com>, Mon,  2 May 2011 12:19:51 +0200
+ -- Proxmox Support Team <support@proxmox.com>, Tue,  3 Jun 2014 08:15:00 +0200
